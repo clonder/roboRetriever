@@ -1,5 +1,6 @@
-🐾 Robo Retriever
+# 🐾 Robo Retriever
 ___
+
 ## 🧾 Project Description
 
 This project aims to develop Robo Retriever, a four-legged robotic dog controlled via Wi-Fi to explore and demonstrate principles of computer architecture. Using a microcontroller, we will program the robot to execute movement commands, leveraging instruction cycles, control signals, and memory management techniques. By building and testing the robot, our team will gain hands-on experience with embedded systems, hardware interfacing, and real-time data processing.
