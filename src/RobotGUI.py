@@ -1,5 +1,5 @@
 import tkinter as tk
-from Controller import Controller
+from ControllerInputReader import ControllerInputReader
 from SocketConnection import SocketConnection
 
 JOYSTICK_RADIUS = 100
@@ -16,7 +16,7 @@ class RobotGUI:
 
         self.window = tk.Tk()
 
-        self.game_pad = Controller()
+        self.game_pad = ControllerInputReader()
         self.socket = SocketConnection()
 
         self.MainGUI()
