@@ -59,7 +59,7 @@ This project aims to develop **Robo Retriever**, a four-legged robotic dog contr
 
 | **Name**           | **Description**                          | **Amount** | **Price** | **Link** |
 |--------------------|------------------------------------------|------------|-----------|----------|
-| Servo Motors       | Motors for robot leg movement           | 12         | -         | [Amazon Link]() |
+| Servo Motors       | Motors for robot leg movement           | 12         | -         | [Amazon Link](https://www.amazon.com/Cyrank-Printer-Accessories-Synchronous-MendelMax/dp/B0CH17YFQL) |
 | Timing Belts       | 25cm belts for leg motion               | 4          | -         | [Amazon Link]() |
 | ESP32              | Microcontroller for control             | 1          | -         | [Amazon Link]() |
 | Battery (Akku)     | Powers ESP32 and servos                 | 1          | -         | [Amazon Link]() |
