@@ -58,7 +58,7 @@ class Controller:
         self.RSB.y = y
 
 
-class ControllerInputReader:
+class ControllerInput:
     """
     Read controller inputs
     Input is a list of 12 entries.
@@ -96,9 +96,9 @@ class ControllerInputReader:
 
     """
     def __init__(self):
-        self.gamepad = hid.device()
-        self.gamepad.open(0x0e6f, 0x0413)
-        self.gamepad.set_nonblocking(True)
+   #     self.gamepad = hid.device()
+   ##     self.gamepad.open(0x0e6f, 0x0413)
+    #    self.gamepad.set_nonblocking(True)
 
         self.Controller = Controller()
 
@@ -128,3 +128,13 @@ class ControllerInputReader:
                     self.Controller.X = True
                 case 8:
                     self.Controller.Y = True
+
+    def InputWriter(self) -> str:
+        """
+        Write input to the gamepad
+        :return: String containing the input
+        """
+        input = f'[lsb:({self.Controller.LSB.x}, {self.Controller.LSB.y}), ' \
+                f'rsb:({self.Controller.RSB.x}, {self.Controller.RSB.y}), ' \
+                f'buttons: A:{self.Controller.A}, B:{self.Controller.B}, X:{self.Controller.X}, Y:{self.Controller.Y}]\n'
+        return input

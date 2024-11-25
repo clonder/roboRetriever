@@ -1,7 +1,7 @@
 import socket
 
-HOST = ...
-PORT = ...
+HOST = "192.168.4.1"
+PORT = 80
 
 class SocketConnection:
     """
@@ -9,10 +9,14 @@ class SocketConnection:
     """
     def __init__(self):
         self.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.s.bind((HOST, PORT))
+        self.s.connect((HOST, PORT))
 
-    def listener(self):
+    def listener(self) -> str:
         pass
 
-    def sender(self, data: dict):
-        self.s.send(data)
+    def sender(self, data: str) -> None:
+        """
+        Send data over socker
+        :param data: Data formatted as string
+        """
+        self.s.send(data.encode())
