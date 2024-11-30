@@ -1,5 +1,5 @@
 import tkinter as tk
-from ControllerInput import ControllerInput
+from ControllerInput import Controller
 from SocketConnection import SocketConnection
 
 JOYSTICK_RADIUS = 100
@@ -14,22 +14,21 @@ class RobotGUI:
         self.canvas = None
         self.joystick = None
 
-        self.window = tk.Tk()
-
-        self.game_pad = ControllerInput()
+        self.game_pad = Controller()
         self.socket = SocketConnection()
 
+        self.window = tk.Tk()
         self.MainGUI()
 
-        self.UpdateJoyStick()
+        self.update_gui_joy_stick()
 
         self.window.mainloop()
 
     def MainGUI(self):
-        self.PaintJoyStick()
+        self.paint_joy_stick()
 
 
-    def PaintJoyStick(self):
+    def paint_joy_stick(self):
         self.canvas = tk.Canvas(self.window, width=CANVAS_SIZE, height=CANVAS_SIZE, bg="white")
         self.canvas.pack()
 
@@ -41,21 +40,19 @@ class RobotGUI:
                                       CANVAS_SIZE // 2 + 10, CANVAS_SIZE // 2 + 10,
                                       fill="blue")
 
-    def UpdateJoyStick(self):
+    def update_gui_joy_stick(self):
         """
         Periodically reads input from gamepad and updates Joystick position in GUI.
         """
-        result = self.game_pad.InputReader()
-        if result is not None:
-            RjoyStick, button, button1 = result
+        self.socket.sender(self.game_pad.input_writer())
 
-            dx = (RjoyStick[0]) * JOYSTICK_RADIUS
-            dy = (RjoyStick[1]) * JOYSTICK_RADIUS
+        dx = (self.game_pad.LSB.x) * JOYSTICK_RADIUS
+        dy = (self.game_pad.LSB.y) * JOYSTICK_RADIUS
 
-            self.canvas.coords(self.joystick, CANVAS_SIZE // 2 + dx - 10, CANVAS_SIZE // 2 + dy - 10,
-                          CANVAS_SIZE // 2 + dx + 10, CANVAS_SIZE // 2 + dy + 10)
+        self.canvas.coords(self.joystick, CANVAS_SIZE // 2 + dx - 10, CANVAS_SIZE // 2 + dy - 10,
+            CANVAS_SIZE // 2 + dx + 10, CANVAS_SIZE // 2 + dy + 10)
 
-        self.window.after(10, self.UpdateJoyStick)
+        self.window.after(10, self.update_gui_joy_stick)
 
 if __name__ == '__main__':
     RobotGUI()

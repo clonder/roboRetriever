@@ -2,10 +2,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-import hid
+from inputs import get_gamepad
+import math
+import threading
 
 
 class Controller:
+    MAX_TRIG_VAL = math.pow(2, 8)
+    MAX_JOY_VAL = math.pow(2, 15)
+
     @dataclass
     class JoyStick:
         x: float = 0
@@ -13,8 +18,6 @@ class Controller:
 
     LSB: JoyStick = JoyStick()
     RSB: JoyStick = JoyStick()
-
-    DPAD: int = 0
 
     A: bool = False
     B: bool = False
@@ -25,116 +28,38 @@ class Controller:
 
     _bin: list = range(0, 256)
 
-    def _mapJoyStick(self, x: int, y: int) -> tuple[float, float]:
-        """
-        Map Joystick values from range [0, 255] to [-1, 1]
-        :param x: X - Axis value
-        :param y: Y - Axis value
-        :return: Tuple (x, y) containing transformed coordinates
-        """
-        assert x in self._bin
-        assert y in self._bin
-
-        dist: float = 255 / 2
-        x: float = (x - dist) / 255
-        y: float = (y - dist) / 255
-
-        return x, y
-
-    def SetLSB(self, x: int, y: int) -> None:
-        """
-        Set LSB Joystick X and Y axis values.
-        """
-        x, y = self._mapJoyStick(x, y)
-        self.LSB.x = x
-        self.LSB.y = y
-
-    def SetRSB(self, x: int, y: int) -> None:
-        """
-        Set RSB Joystick X and Y axis values.
-        """
-        x, y = self._mapJoyStick(x, y)
-        self.RSB.x = x
-        self.RSB.y = y
-
-
-class ControllerInput:
-    """
-    Read controller inputs
-    Input is a list of 12 entries.
-
-    Input dictionary:
-
-    index 0-2:
-        Left joystick
-
-    index 3 - 5:
-        Right joystick
-
-    index 8-10:
-        LT - RT
-
-    index 10:
-        0 -> Nothing
-        1 -> Button A
-        2 -> Button B
-        4 -> Button X
-        8 -> Button Y
-        16 -> Button LB
-        32 -> Button RB
-        64 -> Button Back
-        128 -> Button Start
-
-    index 11:
-        0 -> Nothing
-        1 -> LSB
-        2 -> RSB
-        4 -> D-PAD Up
-        12 -> D-PAD Right
-        28 -> D-PAD Left
-        20 -> D-PAD Down
-
-    """
     def __init__(self):
-   #     self.gamepad = hid.device()
-   ##     self.gamepad.open(0x0e6f, 0x0413)
-    #    self.gamepad.set_nonblocking(True)
+        self._monitor_thread = threading.Thread(target=self.read_controller, args=())
+        self._monitor_thread.daemon = True
+        self._monitor_thread.start()
 
-        self.Controller = Controller()
+    def read_controller(self):
+        while True:
+            events = get_gamepad()
+            for event in events:
+                if event.code == 'ABS_Y':
+                    self.LSB.y = event.state / Controller.MAX_JOY_VAL
+                elif event.code == 'ABS_X':
+                    self.LSB.x = event.state / Controller.MAX_JOY_VAL
+                elif event.code == 'ABS_RY':
+                    self.RSB.y = event.state / Controller.MAX_JOY_VAL
+                elif event.code == 'ABS_RX':
+                    self.RSB.x = event.state / Controller.MAX_JOY_VAL
+                elif event.code == 'BTN_SOUTH':
+                    self.A = event.state == 1
+                elif event.code == 'BTN_NORTH':
+                    self.Y = event.state == 1
+                elif event.code == 'BTN_WEST':
+                    self.X = event.state == 1
+                elif event.code == 'BTN_EAST':
+                    self.B = event.state == 1
 
-    def GetController(self) -> Controller:
-        return self.Controller
-
-    def InputReader(self):
+    def input_writer(self) -> str:
         """
-        Read input of Gamepad
-        :return: Tuple containing transformed variables on input, else None
-        """
-        input = self.gamepad.read(64)
-        if input:
-            Ljoystick = input[:3]
-
-            self.Controller.SetRSB(input[5], input[7])
-
-            Rjoystick = input[3:6]
-
-            button = input[10]
-            match input[10]:
-                case 1:
-                    self.Controller.A = True
-                case 2:
-                    self.Controller.B = True
-                case 4:
-                    self.Controller.X = True
-                case 8:
-                    self.Controller.Y = True
-
-    def InputWriter(self) -> str:
-        """
-        Write input to the gamepad
+        Write game pad input to string
         :return: String containing the input
         """
-        input = f'[lsb:({self.Controller.LSB.x}, {self.Controller.LSB.y}), ' \
-                f'rsb:({self.Controller.RSB.x}, {self.Controller.RSB.y}), ' \
-                f'buttons: A:{self.Controller.A}, B:{self.Controller.B}, X:{self.Controller.X}, Y:{self.Controller.Y}]\n'
+        input = f'[lsb:({self.LSB.x}, {self.LSB.y}), ' \
+                f'rsb:({self.RSB.x}, {self.RSB.y}), ' \
+                f'buttons: A:{self.A}, B:{self.B}, X:{self.X}, Y:{self.Y}]\n'
         return input
