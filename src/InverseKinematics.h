@@ -13,12 +13,12 @@ float UPPERLEG;
 float LOWERLEG;
 // Shoulder length
 float SHOULDER;
-// Base height of robot at starting condition
+// Base height of robot at starting condition (z)
 float BASEHEIGHT;
-// Base length extend from body to leg from side
+// Base length extend from body to leg from side (y)
 float BASESIDELEGEXTEND;
-// Base length extend from body to leg from front
-float BASEFRONTELEGEXTEND;
+// Base length extend from body to leg from front (z)
+float BASEFRONTLEGEXTEND;
 
 class Leg
 {
@@ -27,7 +27,7 @@ class Leg
         double thetaW = PI / 2;
         double ThetaS = PI / 2;
 
-        double x = BASEFRONTELEGEXTEND;
+        double x = BASEFRONTLEGEXTEND;
         double y = BASESIDELEGEXTEND;
         double z = BASEHEIGHT;
 };

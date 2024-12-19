@@ -18,12 +18,22 @@ double InverseKinematics::calculateThetaH(const double x, const double z)
 
 double InverseKinematics::calculateThetaS(const double x, const double y, const double z)
 {
+    const float p1 = pow(UPPERLEG, 2) + pow(z, 2) - pow(LOWERLEG, 2);
+    const float p2 = 2 * UPPERLEG * z;
+    const float beta = acos(p1 / p2);
 
+    const float p3 = sqrt(pow(x, 2) + pow(z, 2) - pow(SHOULDER, 2));
+
+    const float thetaS = beta - atan(x / p3);
+    return thetaS;
 }
 
 double InverseKinematics::calculateThetaW(const double x, const double y, const double z)
 {
-
+    const float p1 = pow(UPPERLEG, 2) + pow(LOWERLEG, 2) - (pow(y, 2) + pow(x, 2) + pow(z, 2) - pow(SHOULDER, 2));
+    const float p2 = 2 * UPPERLEG * LOWERLEG;
+    const float thetaW = acos(p1 / p2);
+    return thetaW;
 }
 
 float InverseKinematics::calculateNewHeight()
