@@ -5,52 +5,36 @@
 #ifndef INVERSEKINEMATICS_H
 #define INVERSEKINEMATICS_H
 #include <Arduino.h>
-#include <math.h>
-// Constants related to the body dimensions of the robot
-// Upper leg length
-float UPPERLEG;
-// Lower leg length
-float LOWERLEG;
-// Shoulder length
-float SHOULDER;
-// Base height of robot at starting condition
-float BASEHEIGHT;
-// Base length extend from body to leg from side
-float BASESIDELEGEXTEND;
-// Base length extend from body to leg from front
-float BASEFRONTELEGEXTEND;
+#include <Leg.h>
 
-class Leg
-{
-    public:
-        double thetaH = PI / 2;
-        double thetaW = PI / 2;
-        double ThetaS = PI / 2;
 
-        double x = BASEFRONTELEGEXTEND;
-        double y = BASESIDELEGEXTEND;
-        double z = BASEHEIGHT;
-};
-
+/**
+ * Contains all functions, variables related to the inverse kinematics
+ */
 class InverseKinematics {
+    // Leg classes to control each leg individually
     public:
-        Leg LeftRear;
-        Leg RightRear;
-        Leg LeftFront;
-        Leg RightFront;
+        //Leg LeftRear;
+        //Leg RightRear;
+        //Leg LeftFront;
+        Leg RightFront = Leg(25, 26, 27);
+
+    InverseKinematics() = default;
 
     // Elbow angle
     static double calculateThetaH(double x, double z);
     static double calculateThetaW(double x, double y, double z);
     static double calculateThetaS(double x, double y, double z);
 
-    double calculateNewHeight();
-    double calculateNewLegExtend();
-
     // Interpolation of the movement
     double interpolate();
+
+    // Starting sequence. Sets all servos to desired default position
+    void Start();
 };
 
+int radiansDegrees(double angle);
+double degreesRadians(int angle);
 
 
 #endif //INVERSEKINEMATICS_H

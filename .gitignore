@@ -1,3 +1,5 @@
 .idea
 __pycache__
 *.bkp
+*.pio
+*.pio/
