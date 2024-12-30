@@ -11,7 +11,7 @@ namespace Constants {
     constexpr double LOWERLEG = 10.0;
     constexpr double SHOULDER = 6.1;
 
-    constexpr double BASEHEIGHT = 8.7;
+    constexpr double BASEHEIGHT = 6.0;
     constexpr double BASESIDELEGEXTEND = 0.5;
     constexpr double BASEFRONTELEGEXTEND = 6.1;
 
@@ -20,7 +20,7 @@ namespace Constants {
     constexpr int KNEEDEFAULTANGLESERVO = 0;
     constexpr int BODYDEFAULTANGLE = 90;
     constexpr int SHOULDERDEFAULTANGLE = 64;
-    constexpr int KNEEDEFAULTANGLE = 51;
+    constexpr int KNEEDEFAULTANGLE = 35;
 }
 
 #endif //CONSTANTS_H
