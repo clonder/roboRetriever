@@ -15,12 +15,45 @@ void InverseKinematics::Start()
     RightFront.y = Constants::BASESIDELEGEXTEND;
     RightFront.z = Constants::BASEHEIGHT;
 
+    LeftFront.x = Constants::BASEFRONTELEGEXTEND;
+    LeftFront.y = Constants::BASESIDELEGEXTEND;
+    LeftFront.z = Constants::BASEHEIGHT;
+
+    RightRear.x = Constants::BASEFRONTELEGEXTEND;
+    RightRear.y = Constants::BASESIDELEGEXTEND;
+    RightRear.z = Constants::BASEHEIGHT;
+
+    LeftRear.x = Constants::BASEFRONTELEGEXTEND;
+    LeftRear.y = Constants::BASESIDELEGEXTEND;
+    LeftRear.z = Constants::BASEHEIGHT;
+
     RightFront.rotateServo(&RightFront.BodyServo, Constants::BODYDEFAULTANGLESERVO);
-    delay(500);
+    delay(50);
     RightFront.rotateServo(&RightFront.ShoulderServo, Constants::SHOULDERDEFAULTANGLESERVO);
-    delay(500);
+    delay(50);
     RightFront.rotateServo(&RightFront.KneeServo, Constants::KNEEDEFAULTANGLESERVO);
-    delay(500);
+    delay(50);
+
+    LeftFront.rotateServo(&LeftFront.BodyServo, Constants::BODYDEFAULTANGLESERVO);
+    delay(50);
+    LeftFront.rotateServo(&LeftFront.ShoulderServo, Constants::SHOULDERDEFAULTANGLESERVO);
+    delay(50);
+    LeftFront.rotateServo(&LeftFront.KneeServo, Constants::KNEEDEFAULTANGLESERVO);
+    delay(50);
+
+    LeftRear.rotateServo(&LeftRear.BodyServo, Constants::BODYDEFAULTANGLESERVO);
+    delay(50);
+    LeftRear.rotateServo(&LeftRear.ShoulderServo, Constants::SHOULDERDEFAULTANGLESERVO);
+    delay(50);
+    LeftRear.rotateServo(&LeftRear.KneeServo, Constants::KNEEDEFAULTANGLESERVO);
+    delay(50);
+
+    RightRear.rotateServo(&RightRear.BodyServo, Constants::BODYDEFAULTANGLESERVO);
+    delay(50);
+    RightRear.rotateServo(&RightRear.ShoulderServo, Constants::SHOULDERDEFAULTANGLESERVO);
+    delay(50);
+    RightRear.rotateServo(&RightRear.KneeServo, Constants::KNEEDEFAULTANGLESERVO);
+    delay(50);
 }
 
 

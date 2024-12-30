@@ -14,10 +14,10 @@
 class InverseKinematics {
     // Leg classes to control each leg individually
     public:
-        //Leg LeftRear;
-        //Leg RightRear;
-        //Leg LeftFront;
-        Leg RightFront = Leg(25, 26, 27);
+        Leg LeftRear = Leg(14, 12, 13);
+        Leg RightRear = Leg(4, 2, 15);
+        Leg LeftFront = Leg(25, 33, 32);
+        Leg RightFront = Leg(5, 18, 19);
 
     InverseKinematics() = default;
 
