@@ -79,6 +79,18 @@ void loop()
         ik.RightFront.rotateBody(new_thetaH);
         Serial.println("Rotation complete");
         delay(2000);
+
+        ik.LeftFront.rotateShoulder(new_thetaS);
+        ik.LeftFront.rotateKnee(new_thetaW);
+        ik.LeftFront.rotateBody(new_thetaH);
+
+        ik.LeftRear.rotateShoulder(new_thetaS);
+        ik.LeftRear.rotateKnee(new_thetaW);
+        ik.LeftRear.rotateBody(new_thetaH);
+
+        ik.RightRear.rotateShoulder(new_thetaS);
+        ik.RightRear.rotateKnee(new_thetaW);
+        ik.RightRear.rotateBody(new_thetaH);
     }
     /*
     ik.RightFront.x += 5;
