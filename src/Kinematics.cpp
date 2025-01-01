@@ -3,6 +3,7 @@
 //
 
 #include "Kinematics.h"
+#include "Constants.h"
 
 /**
  * calculates the knee and shoulder angles needed to move the robot to a desired foot-to-shoulder height
@@ -15,7 +16,10 @@ void Kinematics::calculateVerticalMovement(float new_height, int *new_kneeAngle,
     // TODO: check constraints of min/max height ...
 
   // use law of cosines to get calculate the new knee angle
-  int _new_kneeAngle = acos( 1 - pow(new_height, 2) / (2 * pow(Constants::LIMB, 2)));
+  double _new_kneeAngle_radians = acos( (2 * pow(Constants::LIMB, 2) - pow(new_height, 2)) / (2 * pow(Constants::LIMB, 2)) );
+  int _new_kneeAngle = degrees(_new_kneeAngle_radians);
+    Serial.printf("return value of acos %f\n", _new_kneeAngle_radians);
+    Serial.printf("in degrees %d\n", _new_kneeAngle);
 
   // use fact that all 3 angles result in 180 degrees to calculate new shoulder angle
   int _new_shoulderAngle = (180 - _new_kneeAngle) / 2;
@@ -23,5 +27,6 @@ void Kinematics::calculateVerticalMovement(float new_height, int *new_kneeAngle,
   *new_kneeAngle = _new_kneeAngle;
   *new_shoulderAngle = _new_shoulderAngle;
 };
+
 
 

@@ -12,8 +12,8 @@ void setup()
     Serial.printf("Starting setup sequence\n");
 
     // Position servos into default position
-    // quadruped.Start();
-    // delay(1000);
+    quadruped.Start();
+    delay(1000);
     Serial.printf("Finished setup sequence\n");
 }
 
@@ -25,13 +25,16 @@ void loop()
         String data_1 = Serial.readStringUntil('\n');
         Serial.println(data_1);
         string data = data_1.c_str();
-        if (data.find("UP") != -1)
+        Serial.println("data: " + data_1);
+        if (data.find("up") != -1)
         {
-            int up = stoi(data.substr(1, data.length()));
+            Serial.println("im going up");
+            const int up = stoi(data.substr(2, data.length()));
+            Serial.println(up);
             quadruped.moveVertical(up);
         }
-        else if (data.find("DOWN") != -1) {
-            int down = stoi(data.substr(1, data.length())) * -1; //negative number
+        else if (data.find("down") != -1) {
+            const int down = stoi(data.substr(4, data.length())) * -1; //negative number
             quadruped.moveVertical(down);
         }
         else if (data.find("RESET") != -1)

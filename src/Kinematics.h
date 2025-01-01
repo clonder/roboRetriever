@@ -6,7 +6,6 @@
 #define KINEMATICS_H
 
 #include <Arduino.h>
-#include "Leg.h"
 
 class Kinematics {
 
@@ -14,7 +13,7 @@ class Kinematics {
         Kinematics() = default;
 
         // calculates all relevant motor angles to move a leg up and down
-        void calculateVerticalMovement(float new_height, int *new_kneeAngle, int *new_shoulderAngle);
+        static void calculateVerticalMovement(float new_height, int *new_kneeAngle, int *new_shoulderAngle);
 };
 
 #endif //KINEMATICS_H

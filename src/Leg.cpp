@@ -6,14 +6,16 @@
 #include <Arduino.h>
 
 void Leg::rotateKnee(const int angle) {
-   int tuned = angle - KneeServo.defaultPhysicalAngle;
+    int tuned = 0;
+    if (angle > KneeServo.defaultPhysicalAngle) {
+       tuned = angle - KneeServo.defaultPhysicalAngle;
+    }
     KneeServo.rotateServo(tuned);
     Serial.printf("Knee rotated by %d\n", tuned);
 }
 
-void Leg::rotateShoulder(const int angle)
-{
-    int tuned = -1 * (angle - (ShoulderServo.defaultAngle - ShoulderServo.defaultPhysicalAngle)); // TODO: check if correct
+void Leg::rotateShoulder(const int angle) {
+    int tuned = ShoulderServo.defaultAngle + angle;
     ShoulderServo.rotateServo(tuned);
     Serial.printf("Shoulder rotated by %d\n", tuned);
 }

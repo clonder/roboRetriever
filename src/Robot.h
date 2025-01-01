@@ -11,7 +11,8 @@
 class Robot {
     // Leg classes to control each leg individually
     public:
-        Leg legs[4] = {Leg(14, 12, 13), Leg(4, 2, 15), Leg(25, 33, 32), Leg(5, 18, 19)};
+        // Leg legs[4] = {Leg(14, 12, 13), Leg(4, 2, 15), Leg(25, 33, 32), Leg(5, 18, 19)};
+        Leg legs[1] = {Leg(4, 2, 15)};
 
         Kinematics kinematics = Kinematics();
 

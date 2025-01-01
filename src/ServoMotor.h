@@ -22,7 +22,7 @@ public:
         servo.attach(controlPin, 500, 2400);
 
         // TODO: only set angle after changing it ...
-        angleDegrees = servo.read();
+        angleDegrees = defaultAngle;
         // previousDegrees = angleDegrees;
     }
 

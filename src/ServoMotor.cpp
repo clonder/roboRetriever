@@ -17,6 +17,7 @@ void ServoMotor::rotateServo(int angle) {
  * resets a servo to its default position
 */
 void ServoMotor::resetPosition() {
-    Serial.printf("defaultANgle is %d\n", defaultAngle);
-   servo.write(defaultAngle);
+    servo.write(defaultAngle); //TODO: why is this not executed ..
+    delay(50);
+    Serial.printf("defaultAngle is %d\n", defaultAngle);
 };
