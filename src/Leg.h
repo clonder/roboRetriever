@@ -5,8 +5,7 @@
 #define LEG_H
 
 #include <Constants.h>
-#include <ESP32Servo.h>
-
+#include <ServoMotor.h>
 
 /**
  * Holds all information related to one leg
@@ -14,15 +13,19 @@
 class Leg
 {
     public:
-        // Positions
-        double x = Constants::BASEFRONTELEGEXTEND;
-        double y = Constants::BASESIDELEGEXTEND;
-        double z = Constants::BASEHEIGHT;
+        // Actual Positions of the Leg
+        float x = Constants::BASEFRONTELEGEXTEND;
+        float y = Constants::BASESIDELEGEXTEND;
+        float z = Constants::BASEHEIGHT;
+
+        float previousX = Constants::BASEFRONTELEGEXTEND;
+        float previousY = Constants::BASESIDELEGEXTEND;
+        float previousZ = Constants::BASEHEIGHT;
 
         // Servos
-        Servo BodyServo;
-        Servo ShoulderServo;
-        Servo KneeServo;
+        ServoMotor BodyServo;
+        ServoMotor ShoulderServo;
+        ServoMotor KneeServo;
 
         /** Constructor for leg where pin numbers are passed for servo's
          * @param bodyServoPin
@@ -30,16 +33,9 @@ class Leg
          * @param kneeServoPin
          */
         Leg(int bodyServoPin, int shoulderServoPin, int kneeServoPin)
-        {
-            BodyServo.setPeriodHertz(50);
-            BodyServo.attach(bodyServoPin, 500, 2400);
-
-            ShoulderServo.setPeriodHertz(50);
-            ShoulderServo.attach(shoulderServoPin, 500, 2400);
-
-            KneeServo.setPeriodHertz(50);
-            KneeServo.attach(kneeServoPin, 500, 2400);
-        }
+            : BodyServo(bodyServoPin, Constants::BODYDEFAULTANGLESERVO, Constants::BODYDEFAULTANGLE),
+            ShoulderServo(shoulderServoPin, Constants::SHOULDERDEFAULTANGLESERVO, Constants::SHOULDERDEFAULTANGLE),
+            KneeServo(kneeServoPin, Constants::KNEEDEFAULTANGLESERVO, Constants::KNEEDEFAULTANGLE) {}
 
         /**
         * Rotate knee servo
@@ -60,13 +56,19 @@ class Leg
         void rotateBody(int angle);
 
         /**
-         * Move the leg after modifying leg coordinates inplace.
+         * Move the leg
          */
-        void move(double thetaH, double thetaS, double thetaW);
+        void moveVertical(int shoulderAngle, int kneeAngle);
 
-        void rotateServo(Servo *servo, int angle);
+        /**
+         * updates leg coordinates
+        */
+        void updateCoordinates(double new_x, double new_y, double new_z);
+
+        /**
+         * resets a leg to its default position
+        */
+        void resetPosition();
 };
-
-
 
 #endif //LEG_H
