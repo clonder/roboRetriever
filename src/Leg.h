@@ -9,8 +9,7 @@
 
 enum Direction {
     FORWARD = 0,
-    BACKWARD = 2,
-    ALL = 4
+    BACKWARD = 1,
 };
 
 

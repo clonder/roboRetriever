@@ -19,7 +19,8 @@ class InverseKinematics {
         Leg LeftFront = Leg(25, 33, 32, true);
         Leg RightFront = Leg(5, 18, 19, false);
 
-        Leg* legs[4] = {  &RightFront, &LeftFront, &LeftRear, &RightRear };
+        // Leg* legs[4] = {  &RightFront, &LeftFront, &LeftRear, &RightRear };
+        Leg* legs[4] = {  &RightFront, &LeftRear, &LeftFront,  &RightRear };
 
     InverseKinematics() = default;
 
@@ -35,7 +36,9 @@ class InverseKinematics {
     void Start();
 
     void moveZ(double z);
-    void moveForward(int steps);
+    void moveY(double y);
+    void moveY(Leg* leg, double y);
+    void moveForward();
 
     // tilt the robot forwards or backwards. direction
     void tilt(double z, Direction direction);

@@ -79,9 +79,57 @@ void InverseKinematics::moveZ(double z) {
      }
 }
 
-void InverseKinematics::moveForward(int steps) {
-  // body takes default height for walking (ensures there's no tilt)
-  moveZ(Constants::WALKINGHEIGHT);
+void InverseKinematics::moveY(double y) {
+     for (Leg* leg : legs) {
+        int new_thetaH = degrees(calculateThetaH(leg->x, leg->z));
+        int new_thetaS = degrees(calculateThetaS(leg->x, y, leg->z));
+        int new_thetaW = degrees(calculateThetaW(leg->x, y, leg->z));
+
+        leg->next_kneeAngle = new_thetaW - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
+        leg->next_bodyAngle = -1 * new_thetaH + Constants::BODYDEFAULTANGLESERVO;
+        leg->next_shoulderAngle = -1 * (new_thetaS - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
+
+        Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
+        Serial.printf("X = %f | Y = %f | Z = %f\n", leg->x, y, leg->z);
+
+        leg->move();
+        leg->updateCoordinates(leg->x, y, leg->z);
+        delay(1000);
+     }
+}
+
+
+void InverseKinematics::moveY(Leg* leg, double y) {
+    int new_thetaH = degrees(calculateThetaH(leg->x, leg->z));
+    int new_thetaS = degrees(calculateThetaS(leg->x, y, leg->z));
+    int new_thetaW = degrees(calculateThetaW(leg->x, y, leg->z));
+
+    leg->next_kneeAngle = new_thetaW - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
+    leg->next_bodyAngle = -1 * new_thetaH + Constants::BODYDEFAULTANGLESERVO;
+    leg->next_shoulderAngle = -1 * (new_thetaS - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
+
+    Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
+    Serial.printf("X = %f | Y = %f | Z = %f\n", leg->x, y, leg->z);
+
+    leg->move();
+    leg->updateCoordinates(leg->x, y, leg->z);
+}
+
+void InverseKinematics::moveForward() {
+    // 1. all legs should be walking height (at least 10cm) so upper leg can move freely
+    moveZ(Constants::WALKINGHEIGHT);
+    delay(1000);
+
+    for (Leg* leg : legs) {
+        // 2. lift lower leg up
+        leg->next_kneeAngle =  leg->kneeAngle - 30;
+        leg->move();
+        delay(1000);
+
+        // 3. move lower leg forward
+        moveY(leg, Constants::STEPSIZE);
+        delay(1000);
+    }
 }
 
 /**
@@ -90,8 +138,8 @@ void InverseKinematics::moveForward(int steps) {
 * @param direction. Enum (forward, backward). enum value = offset in the legs array. 0 moves the front legs, 2 moves the back legs
 */
 void InverseKinematics::tilt(double z, Direction direction) {
-    for (int i = direction; i < direction + 2; i++) {
-        Leg* leg = legs[i];
+    for (int i = 0; i < 3; i+=2) {
+        Leg* leg = legs[direction + i];
 
         int new_thetaH = degrees(calculateThetaH(leg->x, z));
         int new_thetaS = degrees(calculateThetaS(leg->x, leg->y, z));

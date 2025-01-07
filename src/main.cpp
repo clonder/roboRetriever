@@ -27,11 +27,16 @@ void loop()
         String data_1 = Serial.readStringUntil('\n');
         Serial.println(data_1);
         string data = data_1.c_str();
-        // walk forward
+        // move leg forward
         if (data.find("y") != -1)
         {
-            int steps = stoi(data.substr(1, data.length()));
-            ik.moveForward(steps);
+            int y = stoi(data.substr(1, data.length()));
+            ik.moveY(y);
+        }
+        // walk forward
+        else if (data.find("w") != -1)
+        {
+            ik.moveForward();
         }
         // move up and down
         else if (data.find("z") != -1)
