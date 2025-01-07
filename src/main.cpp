@@ -27,47 +27,39 @@ void loop()
         String data_1 = Serial.readStringUntil('\n');
         Serial.println(data_1);
         string data = data_1.c_str();
-        // if (data.find("X") != -1)
-        // {
-        //     int x = stoi(data.substr(1, data.length()));
-        //     ik.RightFront.x = x;
-        // }
-        // else if (data.find("Y") != -1)
-        // {
-        //     int y = stoi(data.substr(1, data.length()));
-        //     ik.RightFront.y = y;
-        // }
-        if (data.find("Z") != -1)
+        // walk forward
+        if (data.find("y") != -1)
+        {
+            int steps = stoi(data.substr(1, data.length()));
+            ik.moveForward(steps);
+        }
+        // move up and down
+        else if (data.find("z") != -1)
         {
             int z = stoi(data.substr(1, data.length()));
-            // ik.RightFront.z = z;
-            ik.moveVertical(z);
+            if (z >= 6 | z <= 19) {
+                ik.moveZ(z);
+            }
+        }
+        // tilt forward
+        else if (data.find("ft") != -1)
+        {
+            int z = stoi(data.substr(2, data.length()));
+            if (z >= 6 | z <= 19) {
+                ik.tilt(z, FORWARD);
+            }
+        }
+        // tilt backward
+        else if (data.find("bt") != -1)
+        {
+            int z = stoi(data.substr(2, data.length()));
+            if (z >= 6 | z <= 19) {
+                ik.tilt(z, BACKWARD);
+            }
         }
         else if (data.find("RESET") != -1)
         {
             ik.Start();
         }
-        // int new_thetaH = radiansDegrees(ik.calculateThetaH(ik.RightFront.x, ik.RightFront.z));
-        // int new_thetaS = radiansDegrees(ik.calculateThetaS(ik.RightFront.x, ik.RightFront.y, ik.RightFront.z));
-        // int new_thetaW = radiansDegrees(ik.calculateThetaW(ik.RightFront.x, ik.RightFront.y, ik.RightFront.z));
-        // Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
-        // Serial.printf("X = %f | Y = %f | Z = %f\n", ik.RightFront.x, ik.RightFront.y, ik.RightFront.z);
-        // ik.RightFront.rotateShoulder(new_thetaS);
-        // ik.RightFront.rotateKnee(new_thetaW);
-        // ik.RightFront.rotateBody(new_thetaH);
-        // Serial.println("Rotation complete");
-        // delay(2000);
-        //
-        // ik.LeftFront.rotateShoulder(new_thetaS);
-        // ik.LeftFront.rotateKnee(new_thetaW);
-        // ik.LeftFront.rotateBody(new_thetaH);
-        //
-        // ik.LeftRear.rotateShoulder(new_thetaS);
-        // ik.LeftRear.rotateKnee(new_thetaW);
-        // ik.LeftRear.rotateBody(new_thetaH);
-        //
-        // ik.RightRear.rotateShoulder(new_thetaS);
-        // ik.RightRear.rotateKnee(new_thetaW);
-        // ik.RightRear.rotateBody(new_thetaH);
     }
 }

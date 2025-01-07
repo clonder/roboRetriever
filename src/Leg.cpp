@@ -6,69 +6,66 @@
 #include <Arduino.h>
 #include <ESP32Servo.h>
 
-void Leg::rotateKnee(const int angle)
+void Leg::rotateKnee(int angle)
 {
-    int tuned = 0;
-    if (angle > Constants::KNEEDEFAULTANGLE) {
-        tuned = angle - Constants::KNEEDEFAULTANGLE;
-    }
+    // int tuned = angle - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
     if (isLeft) {
-        tuned = 180 - tuned;
+        angle = 180 - angle;
     }
-    rotateServo(&KneeServo, tuned);
-    Serial.printf("Knee rotated by %d\n", tuned);
+    Serial.printf("Knee rotated by %d\n", angle);
+    rotateServo(&KneeServo, angle);
 }
 
-void Leg::rotateShoulder(const int angle)
+void Leg::rotateShoulder(int angle)
 {
-    int tuned = Constants::SHOULDERDEFAULTANGLESERVO + angle;
-    if (isLeft) { //left shoulder movement
-        tuned = 180 - tuned;
-    }
     // int tuned = -1 * (angle - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
-    Serial.printf("Shoulder rotated by %d\n", tuned);
-    rotateServo(&ShoulderServo, tuned);
+    if (isLeft) { //left shoulder movement
+        angle = 180 - angle;
+    }
+    Serial.printf("Shoulder rotated by %d\n", angle);
+    rotateServo(&ShoulderServo, angle);
 }
 
-// void Leg::rotateBody(const int angle)
-// {
-//     int tuned = -1 * angle + Constants::BODYDEFAULTANGLESERVO;
-//     Serial.printf("Body rotated by %d\n", tuned);
-//     rotateServo(&BodyServo, tuned);
-// }
+void Leg::rotateBody(int angle)
+{
+    // int tuned = -1 * angle + Constants::BODYDEFAULTANGLESERVO;
+    Serial.printf("Body rotated by %d\n", angle);
+    rotateServo(&BodyServo, angle);
+}
 
 void Leg::updateCoordinates(const double new_x, const double new_y, const double new_z) {
-    prev_x = x;
-    prev_y = y;
-    prev_z = z;
-
     x = new_x;
     y = new_y;
     z = new_z;
 }
 
+void Leg::updateAngles() {
+    kneeAngle = next_kneeAngle;
+    shoulderAngle = next_shoulderAngle;
+    bodyAngle = next_bodyAngle;
+}
+
 void Leg::rotateServo(Servo *servo, int angle)
 {
     servo->write(angle);
-    delay(50);
+    // delay(50);
 }
 
-// void Leg::move(const double thetaH, const double thetaS, const double thetaW)
-// {
-//     rotateShoulder(thetaS);
-//     // rotateBody(thetaH);
-//     rotateKnee(thetaW);
-// }
+void Leg::move() {
+    rotateBody(next_bodyAngle);
+    rotateShoulder(next_shoulderAngle);
+    rotateKnee(next_kneeAngle);
+    updateAngles();
+}
 
 void Leg::resetPosition() {
     rotateServo(&BodyServo, Constants::BODYDEFAULTANGLESERVO);
-    rotateServo(&ShoulderServo, Constants::SHOULDERDEFAULTANGLESERVO);
-    rotateServo(&KneeServo, Constants::KNEEDEFAULTANGLESERVO);
+    if (isLeft) {
+        rotateServo(&ShoulderServo, Constants::LEFT_SHOULDERDEFAULTANGLESERVO);
+    	rotateServo(&KneeServo, Constants::LEFT_KNEEDEFAULTANGLESERVO);
+    } else {
+        rotateServo(&ShoulderServo, Constants::SHOULDERDEFAULTANGLESERVO);
+    	rotateServo(&KneeServo, Constants::KNEEDEFAULTANGLESERVO);
+   	}
     updateCoordinates(Constants::BASEFRONTELEGEXTEND, Constants::BASESIDELEGEXTEND, Constants::BASEHEIGHT);
-}
-
-void Leg::moveVertical(const int shoulderAngle, const int kneeAngle, const bool isRight) {
-    rotateShoulder(shoulderAngle);
-    rotateKnee(kneeAngle);
-    // updateCoordinates() TODO:
 }

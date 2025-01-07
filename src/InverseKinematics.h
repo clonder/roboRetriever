@@ -19,7 +19,7 @@ class InverseKinematics {
         Leg LeftFront = Leg(25, 33, 32, true);
         Leg RightFront = Leg(5, 18, 19, false);
 
-        Leg* legs[4] = { &LeftRear, &RightRear, &LeftFront, &RightFront };
+        Leg* legs[4] = {  &RightFront, &LeftFront, &LeftRear, &RightRear };
 
     InverseKinematics() = default;
 
@@ -28,15 +28,17 @@ class InverseKinematics {
     static double calculateThetaW(double x, double y, double z);
     static double calculateThetaS(double x, double y, double z);
 
-    void calculateVerticalMovement(float new_height, int *new_kneeAngle, int *new_shoulderAngle);
-
     // Interpolation of the movement
-    void interpolate(int finalShoulderAngle, int finalKneeAngle);
+    void interpolate(Direction direction);
 
     // Starting sequence. Sets all servos to desired default position
     void Start();
 
-    void moveVertical(int movement);
+    void moveZ(double z);
+    void moveForward(int steps);
+
+    // tilt the robot forwards or backwards. direction
+    void tilt(double z, Direction direction);
 };
 
 #endif //INVERSEKINEMATICS_H

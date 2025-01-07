@@ -7,6 +7,12 @@
 #include <Constants.h>
 #include <ESP32Servo.h>
 
+enum Direction {
+    FORWARD = 0,
+    BACKWARD = 2,
+    ALL = 4
+};
+
 
 /**
  * Holds all information related to one leg
@@ -15,11 +21,17 @@ class Leg {
     public:
         bool isLeft;
 
-        // Positions
-        double prev_x = Constants::BASEFRONTELEGEXTEND;
-        double prev_y = Constants::BASESIDELEGEXTEND;
-        double prev_z = Constants::BASEHEIGHT;
+        //current angles
+        int kneeAngle = Constants::KNEEDEFAULTANGLESERVO;
+        int shoulderAngle = Constants::SHOULDERDEFAULTANGLESERVO;
+        int bodyAngle = Constants::BODYDEFAULTANGLESERVO;
 
+        //desired angles
+        int next_kneeAngle = Constants::KNEEDEFAULTANGLESERVO;
+        int next_shoulderAngle = Constants::SHOULDERDEFAULTANGLESERVO;
+        int next_bodyAngle = Constants::BODYDEFAULTANGLESERVO;
+
+        // Positions
         double x = Constants::BASEFRONTELEGEXTEND;
         double y = Constants::BASESIDELEGEXTEND;
         double z = Constants::BASEHEIGHT;
@@ -37,6 +49,14 @@ class Leg {
         Leg(int bodyServoPin, int shoulderServoPin, int kneeServoPin, bool isLeft)
         {
             this->isLeft = isLeft;
+
+            if (isLeft) {
+                kneeAngle = Constants::LEFT_KNEEDEFAULTANGLESERVO;
+                shoulderAngle = Constants::LEFT_SHOULDERDEFAULTANGLESERVO;
+
+                next_kneeAngle = Constants::LEFT_KNEEDEFAULTANGLESERVO;
+                next_shoulderAngle = Constants::LEFT_SHOULDERDEFAULTANGLESERVO;
+            }
 
             BodyServo.setPeriodHertz(50);
             BodyServo.attach(bodyServoPin, 500, 2400);
@@ -64,22 +84,19 @@ class Leg {
         * Rotate body servo
         * @param angle
         */
-        // void rotateBody(int angle);
+        void rotateBody(int angle);
 
         /**
-         * Move the leg after modifying leg coordinates inplace.
+         * Move the leg
          */
-        void move(double thetaH, double thetaS, double thetaW);
+        void move();
 
         void rotateServo(Servo *servo, int angle);
 
         void updateCoordinates(double new_x, double new_y, double new_z);
+        void updateAngles();
 
         void resetPosition();
-
-        void moveVertical(int shoulderAngle, int kneeAngle, bool isRight);
 };
-
-
 
 #endif //LEG_H
