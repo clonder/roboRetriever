@@ -14,10 +14,12 @@
 class InverseKinematics {
     // Leg classes to control each leg individually
     public:
-        Leg LeftRear = Leg(14, 12, 13);
-        Leg RightRear = Leg(4, 2, 15);
-        Leg LeftFront = Leg(25, 33, 32);
-        Leg RightFront = Leg(5, 18, 19);
+        Leg LeftRear = Leg(14, 12, 13, true);
+        Leg RightRear = Leg(4, 2, 15, false);
+        Leg LeftFront = Leg(25, 33, 32, true);
+        Leg RightFront = Leg(5, 18, 19, false);
+
+        Leg* legs[4] = { &LeftRear, &RightRear, &LeftFront, &RightFront };
 
     InverseKinematics() = default;
 
@@ -26,15 +28,15 @@ class InverseKinematics {
     static double calculateThetaW(double x, double y, double z);
     static double calculateThetaS(double x, double y, double z);
 
+    void calculateVerticalMovement(float new_height, int *new_kneeAngle, int *new_shoulderAngle);
+
     // Interpolation of the movement
-    double interpolate();
+    void interpolate(int finalShoulderAngle, int finalKneeAngle);
 
     // Starting sequence. Sets all servos to desired default position
     void Start();
+
+    void moveVertical(int movement);
 };
-
-int radiansDegrees(double angle);
-double degreesRadians(int angle);
-
 
 #endif //INVERSEKINEMATICS_H

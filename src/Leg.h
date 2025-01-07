@@ -11,10 +11,15 @@
 /**
  * Holds all information related to one leg
  */
-class Leg
-{
+class Leg {
     public:
+        bool isLeft;
+
         // Positions
+        double prev_x = Constants::BASEFRONTELEGEXTEND;
+        double prev_y = Constants::BASESIDELEGEXTEND;
+        double prev_z = Constants::BASEHEIGHT;
+
         double x = Constants::BASEFRONTELEGEXTEND;
         double y = Constants::BASESIDELEGEXTEND;
         double z = Constants::BASEHEIGHT;
@@ -29,8 +34,10 @@ class Leg
          * @param shoulderServoPin
          * @param kneeServoPin
          */
-        Leg(int bodyServoPin, int shoulderServoPin, int kneeServoPin)
+        Leg(int bodyServoPin, int shoulderServoPin, int kneeServoPin, bool isLeft)
         {
+            this->isLeft = isLeft;
+
             BodyServo.setPeriodHertz(50);
             BodyServo.attach(bodyServoPin, 500, 2400);
 
@@ -57,7 +64,7 @@ class Leg
         * Rotate body servo
         * @param angle
         */
-        void rotateBody(int angle);
+        // void rotateBody(int angle);
 
         /**
          * Move the leg after modifying leg coordinates inplace.
@@ -65,6 +72,12 @@ class Leg
         void move(double thetaH, double thetaS, double thetaW);
 
         void rotateServo(Servo *servo, int angle);
+
+        void updateCoordinates(double new_x, double new_y, double new_z);
+
+        void resetPosition();
+
+        void moveVertical(int shoulderAngle, int kneeAngle, bool isRight);
 };
 
 
