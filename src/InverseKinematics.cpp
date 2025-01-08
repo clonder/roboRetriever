@@ -4,6 +4,8 @@
 #include <cmath>
 #include <Constants.h>
 
+using namespace std;
+
 /**
  * Starting sequence. Sets all servos to desired default position
  */
@@ -25,7 +27,9 @@ double InverseKinematics::calculateThetaH(double x,  double z)
     const double phi = atan(x / z);
     const double alpha_2 = acos(Constants::SHOULDER / sqrt(pow(x, 2) + pow(z, 2)));
     const double thetaH = phi - PI / 2 + alpha_2;
-    return thetaH;
+
+	// leg->next_bodyAngle = -1 * new_thetaH + Constants::BODYDEFAULTANGLESERVO;
+    return -1 * degrees(thetaH) + Constants::BODYDEFAULTANGLESERVO;;
 }
 
 /**
@@ -41,7 +45,8 @@ double InverseKinematics::calculateThetaS(const double x, const double y, const 
     const double p2 = 2 * Constants::LIMB * sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(Constants::SHOULDER, 2));
     const double phi = atan(y / sqrt(pow(x, 2) + pow(z, 2) - pow(Constants::SHOULDER, 2)));
     const double thetaS = acos(p1 / p2) - phi;
-    return thetaS;
+//        leg->next_shoulderAngle = -1 * (new_thetaS - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
+    return  -1 * (degrees(thetaS) - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;;
 }
 
 /**
@@ -56,20 +61,17 @@ double InverseKinematics::calculateThetaW(const double x, const double y, const 
     const double p1 = pow(Constants::LIMB, 2) + pow(Constants::LIMB, 2) - (pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(Constants::SHOULDER, 2));
     const double p2 = 2 * Constants::LIMB * Constants::LIMB;
     const double thetaW = acos(p1 / p2);
-    return thetaW;
+//       leg->next_kneeAngle = new_thetaW - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
+    return degrees(thetaW) - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
 }
 
 void InverseKinematics::moveZ(double z) {
      for (Leg* leg : legs) {
-        int new_thetaH = degrees(calculateThetaH(leg->x, z));
-        int new_thetaS = degrees(calculateThetaS(leg->x, leg->y, z));
-        int new_thetaW = degrees(calculateThetaW(leg->x, leg->y, z));
+        leg->next_kneeAngle = calculateThetaW(leg->x, leg->y, z);
+        leg->next_bodyAngle = calculateThetaH(leg->x, z);
+        leg->next_shoulderAngle = calculateThetaS(leg->x, leg->y, z);
 
-        leg->next_kneeAngle = new_thetaW - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
-        leg->next_bodyAngle = -1 * new_thetaH + Constants::BODYDEFAULTANGLESERVO;
-        leg->next_shoulderAngle = -1 * (new_thetaS - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
-
-        Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
+//        Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", l, new_thetaH, new_thetaS);
         Serial.printf("X = %f | Y = %f | Z = %f\n", leg->x, leg->y, z);
 
         leg->move();
@@ -81,15 +83,11 @@ void InverseKinematics::moveZ(double z) {
 
 void InverseKinematics::moveY(double y) {
      for (Leg* leg : legs) {
-        int new_thetaH = degrees(calculateThetaH(leg->x, leg->z));
-        int new_thetaS = degrees(calculateThetaS(leg->x, y, leg->z));
-        int new_thetaW = degrees(calculateThetaW(leg->x, y, leg->z));
+        leg->next_bodyAngle = calculateThetaH(leg->x, leg->z);
+        leg->next_kneeAngle = calculateThetaW(leg->x, y, leg->z);
+        leg->next_shoulderAngle = calculateThetaS(leg->x, y, leg->z);
 
-        leg->next_kneeAngle = new_thetaW - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
-        leg->next_bodyAngle = -1 * new_thetaH + Constants::BODYDEFAULTANGLESERVO;
-        leg->next_shoulderAngle = -1 * (new_thetaS - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
-
-        Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
+//        Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
         Serial.printf("X = %f | Y = %f | Z = %f\n", leg->x, y, leg->z);
 
         leg->move();
@@ -98,17 +96,12 @@ void InverseKinematics::moveY(double y) {
      }
 }
 
-
 void InverseKinematics::moveY(Leg* leg, double y) {
-    int new_thetaH = degrees(calculateThetaH(leg->x, leg->z));
-    int new_thetaS = degrees(calculateThetaS(leg->x, y, leg->z));
-    int new_thetaW = degrees(calculateThetaW(leg->x, y, leg->z));
+    leg->next_bodyAngle = calculateThetaH(leg->x, leg->z);
+    leg->next_kneeAngle = calculateThetaW(leg->x, y, leg->z);
+    leg->next_shoulderAngle = calculateThetaS(leg->x, y, leg->z);
 
-    leg->next_kneeAngle = new_thetaW - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
-    leg->next_bodyAngle = -1 * new_thetaH + Constants::BODYDEFAULTANGLESERVO;
-    leg->next_shoulderAngle = -1 * (new_thetaS - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
-
-    Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
+//    Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
     Serial.printf("X = %f | Y = %f | Z = %f\n", leg->x, y, leg->z);
 
     leg->move();
@@ -121,14 +114,23 @@ void InverseKinematics::moveForward() {
     delay(1000);
 
     for (Leg* leg : legs) {
-        // 2. lift lower leg up
-        leg->next_kneeAngle =  leg->kneeAngle - 30;
-        leg->move();
-        delay(1000);
+      	// in interpolate we have all the y and z positions needed to move a step forward
+        // we also have the angles for every y and z position
 
-        // 3. move lower leg forward
-        moveY(leg, Constants::STEPSIZE);
+        for (int i = 0; i < Constants::AMOUNT_POINTS; i++) {
+        	// move leg to this position
+    		leg->next_kneeAngle = get<1>(leg->interpolation_angles[i]);
+    		leg->next_shoulderAngle =
+        }
+        // 2. calculate final y position
+        int new_thetaH = degrees(calculateThetaH(leg->x, leg->z));
+        int new_thetaS = degrees(calculateThetaS(leg->x, Constants::STEPSIZE, leg->z)); //TODO: is y reset after a step or continuously updates ?
+        int new_thetaW = degrees(calculateThetaW(leg->x, Constants::STEPSIZE, leg->z));
+
+
+        // lift lower leg up and move in a curve to final angle
         delay(1000);
+        leg->updateCoordinates(leg->x, Constants::STEPSIZE, leg->z);
     }
 }
 

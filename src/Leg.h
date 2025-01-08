@@ -12,7 +12,6 @@ enum Direction {
     BACKWARD = 1,
 };
 
-
 /**
  * Holds all information related to one leg
  */
@@ -40,6 +39,10 @@ class Leg {
         Servo ShoulderServo;
         Servo KneeServo;
 
+        // Walking
+        std::tuple<double, double> curve_values[Constants::AMOUNT_POINTS];
+        std::tuple<int, int> interpolation_angles[Constants::AMOUNT_POINTS]; // shoulder and knee angle
+
         /** Constructor for leg where pin numbers are passed for servo's
          * @param bodyServoPin
          * @param shoulderServoPin
@@ -48,6 +51,8 @@ class Leg {
         Leg(int bodyServoPin, int shoulderServoPin, int kneeServoPin, bool isLeft)
         {
             this->isLeft = isLeft;
+
+            calculateCurve(); // saves array of points for walking interpolation
 
             if (isLeft) {
                 kneeAngle = Constants::LEFT_KNEEDEFAULTANGLESERVO;
@@ -96,6 +101,12 @@ class Leg {
         void updateAngles();
 
         void resetPosition();
+
+        // calculates the points for the curve movement when walking
+        void calculateCurve();
+
+        // calculates the angles for each position that the leg needs to take
+        void calculateInterpolationAngles();
 };
 
 #endif //LEG_H

@@ -29,9 +29,6 @@ class InverseKinematics {
     static double calculateThetaW(double x, double y, double z);
     static double calculateThetaS(double x, double y, double z);
 
-    // Interpolation of the movement
-    void interpolate(Direction direction);
-
     // Starting sequence. Sets all servos to desired default position
     void Start();
 
