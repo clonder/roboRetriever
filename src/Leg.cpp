@@ -15,8 +15,9 @@ void Leg::rotateKnee(int angle)
     if (isLeft) {
         angle = 180 - angle;
     }
-    Serial.printf("Knee rotated by %d\n", angle);
+    // Serial.printf("Knee rotated by %d\n", angle);
     rotateServo(&KneeServo, angle);
+    delay(10);
 }
 
 void Leg::rotateShoulder(int angle)
@@ -25,14 +26,15 @@ void Leg::rotateShoulder(int angle)
     if (isLeft) { //left shoulder movement
         angle = 180 - angle;
     }
-    Serial.printf("Shoulder rotated by %d\n", angle);
+    // Serial.printf("Shoulder rotated by %d\n", angle);
     rotateServo(&ShoulderServo, angle);
+    delay(10);
 }
 
 void Leg::rotateBody(int angle)
 {
     // int tuned = -1 * angle + Constants::BODYDEFAULTANGLESERVO;
-    Serial.printf("Body rotated by %d\n", angle);
+    // Serial.printf("Body rotated by %d\n", angle);
     rotateServo(&BodyServo, angle);
 }
 
@@ -83,16 +85,18 @@ void Leg::calculateCurve() {
 
     // parametrisierte wege untere kurve [-3, 3]
     auto bottom_func = [] (double i) -> tuple<double, double> {
-        return make_tuple(i, 0.05 * pow(i, 2));
+        return make_tuple(-i, 0.05 * pow(i, 2));
     };
 
     // values obere kurve
     auto top_func = [] (double i) -> tuple<double, double> {
-        return make_tuple(-1 * (i - 6), 1.281 * cos(i - 6) + 1.718);
+        return make_tuple(-(i - 6), 1.281 * cos(i - 6) + 1.718);
     };
 
     for (int i = 0; i < amount_points; i++) {
-        double t = i * multiplier - 3.;
+        // Maps [0, 12] to [0, 9] + [-3, 0] ranges so that starting point of array is starting point of walking motion
+        // f(x) = (x + 3) % 12 - 3
+        double t = std::fmod(i * multiplier + 3., 12) - 3;
         if (t >= get<0>(bottom_range) && t < get<1>(bottom_range)) {
            // calculate bottomfunc
             curve_values[i] = bottom_func(t);
@@ -108,8 +112,9 @@ void Leg::calculateInterpolationAngles() {
     // 1.
     for (int i = 0; i < Constants::AMOUNT_POINTS; i++) {
         tuple<double, double> curve_point = curve_values[i];
-        double thetaW = InverseKinematics::calculateThetaW(x, get<0>(curve_point), get<1>(curve_point));
-        double thetaS = InverseKinematics::calculateThetaS(x, get<0>(curve_point), get<1>(curve_point));
+        double z_value = Constants::WALKINGHEIGHT - get<1>(curve_point);
+        double thetaW = InverseKinematics::calculateThetaW(x, get<0>(curve_point), z_value);
+        double thetaS = InverseKinematics::calculateThetaS(x, get<0>(curve_point), z_value);
         interpolation_angles[i] = make_tuple(thetaS, thetaW);
     }
 }

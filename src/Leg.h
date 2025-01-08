@@ -53,6 +53,7 @@ class Leg {
             this->isLeft = isLeft;
 
             calculateCurve(); // saves array of points for walking interpolation
+            calculateInterpolationAngles();
 
             if (isLeft) {
                 kneeAngle = Constants::LEFT_KNEEDEFAULTANGLESERVO;

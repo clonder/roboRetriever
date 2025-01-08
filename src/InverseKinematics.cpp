@@ -116,21 +116,21 @@ void InverseKinematics::moveForward() {
     for (Leg* leg : legs) {
       	// in interpolate we have all the y and z positions needed to move a step forward
         // we also have the angles for every y and z position
+        for (int i = 0; i < Constants::AMOUNT_POINTS; i++) {
+			 Serial.printf("(%.3f, %.3f), ", get<0>(leg->curve_values[i]), get<1>(leg->curve_values[i]));
+//          	Serial.printf("(%d, %d)", get<0>(leg->interpolation_angles[i]), get<1>(leg->interpolation_angles[i]));
+        }
 
         for (int i = 0; i < Constants::AMOUNT_POINTS; i++) {
         	// move leg to this position
+            // bodyAngle never changes
+    		leg->next_shoulderAngle = get<0>(leg->interpolation_angles[i]);
     		leg->next_kneeAngle = get<1>(leg->interpolation_angles[i]);
-    		leg->next_shoulderAngle =
+            leg->move();
+			// leg->updateCoordinates(leg->x, Constants::STEPSIZE, leg->z);
         }
-        // 2. calculate final y position
-        int new_thetaH = degrees(calculateThetaH(leg->x, leg->z));
-        int new_thetaS = degrees(calculateThetaS(leg->x, Constants::STEPSIZE, leg->z)); //TODO: is y reset after a step or continuously updates ?
-        int new_thetaW = degrees(calculateThetaW(leg->x, Constants::STEPSIZE, leg->z));
-
-
         // lift lower leg up and move in a curve to final angle
-        delay(1000);
-        leg->updateCoordinates(leg->x, Constants::STEPSIZE, leg->z);
+//delay(1000);
     }
 }
 
