@@ -90,7 +90,7 @@ void Leg::calculateCurve() {
 
     // values obere kurve
     auto top_func = [] (double i) -> tuple<double, double> {
-        return make_tuple(-(i - 6), 1.281 * cos(i - 6) + 1.718);
+        return make_tuple((i - 6), 1.281 * cos(i - 6) + 1.718);
     };
 
     for (int i = 0; i < amount_points; i++) {
