@@ -118,14 +118,17 @@ void InverseKinematics::moveForward() {
         // we also have the angles for every y and z position
 
         for (int i = 0; i < Constants::AMOUNT_POINTS; i++) {
+            //TODO: Leg coordinates are not updated during this step!!
         	// move leg to this position
+    		leg->next_shoulderAngle = get<0>(leg->interpolation_angles[i]);
     		leg->next_kneeAngle = get<1>(leg->interpolation_angles[i]);
-    		leg->next_shoulderAngle =
+
+    		leg->move();
         }
         // 2. calculate final y position
-        int new_thetaH = degrees(calculateThetaH(leg->x, leg->z));
-        int new_thetaS = degrees(calculateThetaS(leg->x, Constants::STEPSIZE, leg->z)); //TODO: is y reset after a step or continuously updates ?
-        int new_thetaW = degrees(calculateThetaW(leg->x, Constants::STEPSIZE, leg->z));
+        // int new_thetaH = degrees(calculateThetaH(leg->x, leg->z));
+        // int new_thetaS = degrees(calculateThetaS(leg->x, Constants::STEPSIZE, leg->z)); //TODO: is y reset after a step or continuously updates ?
+        // int new_thetaW = degrees(calculateThetaW(leg->x, Constants::STEPSIZE, leg->z));
 
 
         // lift lower leg up and move in a curve to final angle

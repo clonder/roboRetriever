@@ -83,18 +83,20 @@ void Leg::calculateCurve() {
 
     // parametrisierte wege untere kurve [-3, 3]
     auto bottom_func = [] (double i) -> tuple<double, double> {
-        return make_tuple(i, 0.05 * pow(i, 2));
+        return make_tuple(-i, 0.05 * pow(i, 2));
     };
 
     // values obere kurve
     auto top_func = [] (double i) -> tuple<double, double> {
-        return make_tuple(-1 * (i - 6), 1.281 * cos(i - 6) + 1.718);
+        return make_tuple(-(i - 6), 1.281 * cos(i - 6) + 1.718);
     };
 
     for (int i = 0; i < amount_points; i++) {
-        double t = i * multiplier - 3.;
+        // Maps [0, 12] to [0, 9] + [-3, 0] ranges so that starting point of array is starting point of walking motion
+        // f(x) = (x + 3) % 12 - 3
+        double t = std::fmod(i * multiplier + 3., 12) - 3;
         if (t >= get<0>(bottom_range) && t < get<1>(bottom_range)) {
-           // calculate bottomfunc
+            // calculate bottomfunc
             curve_values[i] = bottom_func(t);
         }
         else {
