@@ -3,3 +3,5 @@ __pycache__
 *.bkp
 *.pio
 *.pio/
+.ccls-cache
+
