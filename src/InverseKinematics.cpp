@@ -96,35 +96,24 @@ void InverseKinematics::moveY(double y) {
      }
 }
 
-void InverseKinematics::moveY(Leg* leg, double y) {
-    leg->next_bodyAngle = calculateThetaH(leg->x, leg->z);
-    leg->next_kneeAngle = calculateThetaW(leg->x, y, leg->z);
-    leg->next_shoulderAngle = calculateThetaS(leg->x, y, leg->z);
+void InverseKinematics::moveForward(int steps) {
+  // 1. all legs should be walking height (at least 10cm) so upper leg can move freely
+  moveZ(Constants::WALKINGHEIGHT);
 
-//    Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
-    Serial.printf("X = %f | Y = %f | Z = %f\n", leg->x, y, leg->z);
-
-    leg->move();
-    leg->updateCoordinates(leg->x, y, leg->z);
-}
-
-void InverseKinematics::moveForward() {
-    // 1. all legs should be walking height (at least 10cm) so upper leg can move freely
-    moveZ(Constants::WALKINGHEIGHT);
-    delay(1000);
-
+  for (int i = 0; i < steps; i++) {
     for (Leg* leg : legs) {
       	// in interpolate we have all the y and z positions needed to move a step forward
         // we also have the angles for every y and z position
-
         for (int i = 0; i < Constants::AMOUNT_POINTS; i++) {
         	// move leg to this position
             // bodyAngle never changes
     		leg->next_shoulderAngle = get<0>(leg->interpolation_angles[i]);
     		leg->next_kneeAngle = get<1>(leg->interpolation_angles[i]);
             leg->move();
+            delay(10);
         }
     }
+  }
 }
 
 /**
@@ -151,7 +140,6 @@ void InverseKinematics::tilt(double z, Direction direction) {
         leg->updateCoordinates(leg->x, leg->y, z);
 
         Serial.println("Tilt complete");
-//        delay(50);
     }
 }
 

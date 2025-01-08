@@ -11,29 +11,26 @@ using namespace std;
 
 void Leg::rotateKnee(int angle)
 {
-    // int tuned = angle - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
     if (isLeft) {
         angle = 180 - angle;
     }
     // Serial.printf("Knee rotated by %d\n", angle);
     rotateServo(&KneeServo, angle);
-    delay(10);
+    // delay(10);
 }
 
 void Leg::rotateShoulder(int angle)
 {
-    // int tuned = -1 * (angle - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
     if (isLeft) { //left shoulder movement
         angle = 180 - angle;
     }
     // Serial.printf("Shoulder rotated by %d\n", angle);
     rotateServo(&ShoulderServo, angle);
-    delay(10);
+    // delay(10);
 }
 
 void Leg::rotateBody(int angle)
 {
-    // int tuned = -1 * angle + Constants::BODYDEFAULTANGLESERVO;
     // Serial.printf("Body rotated by %d\n", angle);
     rotateServo(&BodyServo, angle);
 }

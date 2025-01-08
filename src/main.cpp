@@ -36,7 +36,8 @@ void loop()
         // walk forward
         else if (data.find("w") != -1)
         {
-            ik.moveForward();
+            int steps = stoi(data.substr(1, data.length()));
+            ik.moveForward(steps);
         }
         // move up and down
         else if (data.find("z") != -1)
