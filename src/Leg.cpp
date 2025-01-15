@@ -50,7 +50,6 @@ void Leg::updateAngles() {
 void Leg::rotateServo(Servo *servo, int angle)
 {
     servo->write(angle);
-    // delay(50);
 }
 
 void Leg::move() {

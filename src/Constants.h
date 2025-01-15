@@ -25,7 +25,7 @@ namespace Constants {
     constexpr int SHOULDERDEFAULTANGLE = 85;
     constexpr int KNEEDEFAULTANGLE = 30;
 
-    constexpr int WALKINGHEIGHT = 13;
+    constexpr int WALKINGHEIGHT = 19;
     constexpr int AMOUNT_POINTS = 120;
 
 }

@@ -19,18 +19,25 @@ void setup()
     // Setup serial
     Serial.begin(115200);
     while (!Serial) {
-        ; // Wait for serial port to connect. Needed for native USB port only
+        yield(); // Yield to reset the watchdog timer
     }
 
     // Connect to Wi-Fi
     WiFi.begin(ssid, password);
-    while (WiFi.status() != WL_CONNECTED) {
+    unsigned long startAttemptTime = millis();
+    while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000) {
         delay(1000);
+        yield(); // Yield to reset the watchdog timer
+    }
+
+    if (WiFi.status() == WL_CONNECTED) {
+        wifiConnected = true;
     }
 
     // Position servos into default position
     ik.Start();
     delay(1000);
+    yield(); // Yield to reset the watchdog timer
 
     server.on("/test", HTTP_GET, [](AsyncWebServerRequest *request){
         request->send(200, "text/plain", "Test endpoint reached");
@@ -46,6 +53,7 @@ void setup()
             while ((pos = data.find(";")) != string::npos) {
                 commands.push_back(data.substr(0, pos));
                 data.erase(0, pos + 1);
+                yield(); // Yield to reset the watchdog timer
             }
             commands.push_back(data);
 
@@ -56,7 +64,19 @@ void setup()
                     ik.moveY(y);
                 } else if (cmd.find("w") != -1) {
                     int steps = stoi(cmd.substr(1, cmd.length()));
-                    ik.moveForward(steps);
+                    
+                    // Break down the movement into smaller steps
+                    const int stepIncrement = 1; // Adjust this value as needed
+                    int remainingSteps = steps;
+                    
+                    while (remainingSteps > 0) {
+                        int currentStep = min(stepIncrement, remainingSteps);
+                        ik.moveForward(currentStep);
+                        remainingSteps -= currentStep;
+                        
+                        // Yield control to reset the watchdog timer
+                        yield();
+                    }
                 } else if (cmd.find("z") != -1) {
                     int z = stoi(cmd.substr(1, cmd.length()));
                     if (z >= 6 && z <= 19) {
@@ -64,12 +84,12 @@ void setup()
                     }
                 } else if (cmd.find("ft") != -1) {
                     int z = stoi(cmd.substr(2, cmd.length()));
-                    if (z >= 6 && z <= 19) {
+                    if (z >= 2 && z <= 19) {
                         ik.tilt(z, FORWARD);
                     }
                 } else if (cmd.find("bt") != -1) {
                     int z = stoi(cmd.substr(2, cmd.length()));
-                    if (z >= 6 && z <= 19) {
+                    if (z >= 3 && z <= 19) {
                         ik.tilt(z, BACKWARD);
                     }
                 } else if (cmd.find("RESET") != -1) {
@@ -79,6 +99,7 @@ void setup()
                     return;
                 }
                 delay(500);
+                yield(); // Yield to reset the watchdog timer
             }
             request->send(200, "text/plain", "Command sequence executed");
         } else {
@@ -99,13 +120,20 @@ void loop()
         // Wait for connection
         while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000) {
             delay(500);
+            yield(); // Yield to reset the watchdog timer
         }
 
         if (WiFi.status() == WL_CONNECTED) {
             wifiConnected = true;
+        } else {
+            // If not connected, restart the attempt
+            WiFi.disconnect();
+            delay(1000);
+            yield(); // Yield to reset the watchdog timer
         }
     }
 
     // Add a small delay to avoid flooding the Serial Monitor
     delay(1000);
+    yield(); // Yield to reset the watchdog timer
 }
