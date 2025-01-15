@@ -126,27 +126,22 @@ void InverseKinematics::tilt(int a, Direction direction) {
     for (int i = 0; i < 3; i+=2) {
         Leg* leg = legs[direction + i];
         double z = leg->z + b;
-        moveLegUp(leg, z);
+        moveZ(leg, z);
     }
 
    Direction new_direction = static_cast<Direction>(direction ^ 1); //use xor to toggle 1/0
    for (int i = 0; i < 3; i+=2) {
         Leg* leg = legs[new_direction  + i];
         double z = leg->z - b;
-        moveLegUp(leg, z);
+        moveZ(leg, z);
    }
 }
 
-void InverseKinematics::moveLegUp(Leg* leg, double z) {
-    int new_thetaH = degrees(calculateThetaH(leg->x, z));
-    int new_thetaS = degrees(calculateThetaS(leg->x, leg->y, z));
-    int new_thetaW = degrees(calculateThetaW(leg->x, leg->y, z));
+void InverseKinematics::moveZ(Leg* leg, double z) {
+    leg->next_kneeAngle = calculateThetaW(leg->x, leg->y, z);
+    leg->next_bodyAngle = calculateThetaH(leg->x, z);
+    leg->next_shoulderAngle = calculateThetaS(leg->x, leg->y, z);
 
-    leg->next_kneeAngle = new_thetaW - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
-    leg->next_bodyAngle = -1 * new_thetaH + Constants::BODYDEFAULTANGLESERVO;
-    leg->next_shoulderAngle = -1 * (new_thetaS - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
-
-    Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
     Serial.printf("X = %f | Y = %f | Z = %f\n", leg->x, leg->y, z);
 
     leg->move();
