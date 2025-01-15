@@ -15,7 +15,15 @@ void Leg::rotateKnee(int angle)
         angle = 180 - angle;
     }
     // Serial.printf("Knee rotated by %d\n", angle);
-    rotateServo(&KneeServo, angle);
+    int direction = 1;
+    if (kneeAngle > angle) {
+        direction = -1;
+    }
+
+    while (kneeAngle != angle) {
+        rotateServo(&KneeServo, kneeAngle);
+        kneeAngle = kneeAngle + (1 * direction);
+    }
     // delay(10);
 }
 
@@ -24,8 +32,17 @@ void Leg::rotateShoulder(int angle)
     if (isLeft) { //left shoulder movement
         angle = 180 - angle;
     }
+
+    int direction = 1;
+    if (shoulderAngle > angle) {
+        direction = -1;
+    }
+
+    while (shoulderAngle != angle) {
+        rotateServo(&ShoulderServo, shoulderAngle);
+        shoulderAngle = shoulderAngle + (1 * direction);
+    }
     // Serial.printf("Shoulder rotated by %d\n", angle);
-    rotateServo(&ShoulderServo, angle);
     // delay(10);
 }
 
@@ -49,6 +66,7 @@ void Leg::updateAngles() {
 
 void Leg::rotateServo(Servo *servo, int angle)
 {
+    int lastAngle = servo->read();
     servo->write(angle);
     // delay(50);
 }
