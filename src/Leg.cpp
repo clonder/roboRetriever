@@ -68,7 +68,6 @@ void Leg::rotateServo(Servo *servo, int angle)
 {
     int lastAngle = servo->read();
     servo->write(angle);
-    // delay(50);
 }
 
 void Leg::move() {

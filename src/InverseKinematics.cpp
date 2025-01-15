@@ -104,11 +104,11 @@ void InverseKinematics::moveForward(int steps) {
     for (Leg* leg : legs) {
       	// in interpolate we have all the y and z positions needed to move a step forward
         // we also have the angles for every y and z position
-        for (int i = 0; i < Constants::AMOUNT_POINTS; i++) {
+        for (int j = 0; j < Constants::AMOUNT_POINTS; j++) {
         	// move leg to this position
             // bodyAngle never changes
-    		leg->next_shoulderAngle = get<0>(leg->interpolation_angles[i]);
-    		leg->next_kneeAngle = get<1>(leg->interpolation_angles[i]);
+    		leg->next_shoulderAngle = get<0>(leg->interpolation_angles[j]);
+    		leg->next_kneeAngle = get<1>(leg->interpolation_angles[j]);
             leg->move();
             delay(10);
         }
