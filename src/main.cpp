@@ -67,13 +67,15 @@ void setup()
                     int remainingSteps = steps;
                     
                     while (remainingSteps > 0) {
+                        esp_task_wdt_reset();
                         int currentStep = min(stepIncrement, remainingSteps);
                         ik.moveForward(currentStep);
                         remainingSteps -= currentStep;
                         
                         // Yield control to reset the watchdog timer
-                        esp_task_wdt_reset();
+                        
                     }
+                    esp_task_wdt_reset();
                 } else if (cmd.find("z") != -1) {
                     int z = stoi(cmd.substr(1, cmd.length()));
                     if (z >= 6 && z <= 19) {

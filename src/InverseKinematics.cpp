@@ -98,7 +98,7 @@ void InverseKinematics::moveY(double y) {
 
 void InverseKinematics::moveForward(int steps) {
   // 1. all legs should be walking height (at least 10cm) so upper leg can move freely
-  moveZ(Constants::WALKINGHEIGHT);
+  //moveZ(Constants::WALKINGHEIGHT);
 
   for (int i = 0; i < steps; i++) {
     for (Leg* leg : legs) {
