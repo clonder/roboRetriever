@@ -20,7 +20,7 @@ class InverseKinematics {
         Leg RightFront = Leg(5, 18, 19, false);
 
         // Leg* legs[4] = {  &RightFront, &LeftFront, &LeftRear, &RightRear };
-        Leg* legs[4] = {  &RightFront, &LeftRear, &LeftFront,  &RightRear };
+        Leg* legs[4] = {  &LeftFront, &RightFront, &RightRear, &LeftRear  };
 
     InverseKinematics() = default;
 

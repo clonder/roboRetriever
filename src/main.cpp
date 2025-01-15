@@ -4,6 +4,7 @@
 #include <WiFi.h>
 #include <ESPAsyncWebServer.h>
 #include <vector>
+#include "esp_task_wdt.h"
 
 using namespace std;
 
@@ -19,7 +20,6 @@ void setup()
     // Setup serial
     Serial.begin(115200);
     while (!Serial) {
-        yield(); // Yield to reset the watchdog timer
     }
 
     // Connect to Wi-Fi
@@ -27,7 +27,6 @@ void setup()
     unsigned long startAttemptTime = millis();
     while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000) {
         delay(1000);
-        yield(); // Yield to reset the watchdog timer
     }
 
     if (WiFi.status() == WL_CONNECTED) {
@@ -37,7 +36,6 @@ void setup()
     // Position servos into default position
     ik.Start();
     delay(1000);
-    yield(); // Yield to reset the watchdog timer
 
     server.on("/test", HTTP_GET, [](AsyncWebServerRequest *request){
         request->send(200, "text/plain", "Test endpoint reached");
@@ -53,7 +51,6 @@ void setup()
             while ((pos = data.find(";")) != string::npos) {
                 commands.push_back(data.substr(0, pos));
                 data.erase(0, pos + 1);
-                yield(); // Yield to reset the watchdog timer
             }
             commands.push_back(data);
 
@@ -75,7 +72,7 @@ void setup()
                         remainingSteps -= currentStep;
                         
                         // Yield control to reset the watchdog timer
-                        yield();
+                        esp_task_wdt_reset();
                     }
                 } else if (cmd.find("z") != -1) {
                     int z = stoi(cmd.substr(1, cmd.length()));
@@ -99,7 +96,6 @@ void setup()
                     return;
                 }
                 delay(500);
-                yield(); // Yield to reset the watchdog timer
             }
             request->send(200, "text/plain", "Command sequence executed");
         } else {
@@ -120,7 +116,6 @@ void loop()
         // Wait for connection
         while (WiFi.status() != WL_CONNECTED && millis() - startAttemptTime < 10000) {
             delay(500);
-            yield(); // Yield to reset the watchdog timer
         }
 
         if (WiFi.status() == WL_CONNECTED) {
@@ -129,11 +124,9 @@ void loop()
             // If not connected, restart the attempt
             WiFi.disconnect();
             delay(1000);
-            yield(); // Yield to reset the watchdog timer
         }
     }
 
     // Add a small delay to avoid flooding the Serial Monitor
     delay(1000);
-    yield(); // Yield to reset the watchdog timer
 }
