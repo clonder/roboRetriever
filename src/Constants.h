@@ -15,6 +15,8 @@ namespace Constants {
     constexpr double BASESIDELEGEXTEND = 0.5; // default y value
     constexpr double BASEFRONTELEGEXTEND = 5.5; // default x value
 
+    constexpr double HALF_BODY = 10; //TODO: lenght from shoulder to middle of body
+
     constexpr int BODYDEFAULTANGLESERVO = 85;
     constexpr int SHOULDERDEFAULTANGLESERVO = 0; //Right side
     constexpr int LEFT_SHOULDERDEFAULTANGLESERVO = 180;

@@ -116,30 +116,43 @@ void InverseKinematics::moveForward() {
 
 /**
 * tilts the robot forwards or backwards
-* @param Z new z coordinate
+* @param a tilting angle
 * @param direction. Enum (forward, backward). enum value = offset in the legs array. 0 moves the front legs, 2 moves the back legs
 */
-void InverseKinematics::tilt(double z, Direction direction) {
+void InverseKinematics::tilt(int a, Direction direction) {
+    double b = Constants::HALF_BODY * sin(a);
+
+    // move legs of direction (forward or backward)
     for (int i = 0; i < 3; i+=2) {
         Leg* leg = legs[direction + i];
-
-        int new_thetaH = degrees(calculateThetaH(leg->x, z));
-        int new_thetaS = degrees(calculateThetaS(leg->x, leg->y, z));
-        int new_thetaW = degrees(calculateThetaW(leg->x, leg->y, z));
-
-        leg->next_kneeAngle = new_thetaW - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
-        leg->next_bodyAngle = -1 * new_thetaH + Constants::BODYDEFAULTANGLESERVO;
-        leg->next_shoulderAngle = -1 * (new_thetaS - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
-
-        Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
-        Serial.printf("X = %f | Y = %f | Z = %f\n", leg->x, leg->y, z);
-
-        leg->move();
-        leg->updateCoordinates(leg->x, leg->y, z);
-
-        Serial.println("Tilt complete");
+        double z = leg->z + b;
+        moveLegUp(leg, z);
     }
+
+   Direction new_direction = static_cast<Direction>(direction ^ 1); //use xor to toggle 1/0
+   for (int i = 0; i < 3; i+=2) {
+        Leg* leg = legs[new_direction  + i];
+        double z = leg->z - b;
+        moveLegUp(leg, z);
+   }
 }
+
+void InverseKinematics::moveLegUp(Leg* leg, double z) {
+    int new_thetaH = degrees(calculateThetaH(leg->x, z));
+    int new_thetaS = degrees(calculateThetaS(leg->x, leg->y, z));
+    int new_thetaW = degrees(calculateThetaW(leg->x, leg->y, z));
+
+    leg->next_kneeAngle = new_thetaW - Constants::KNEEDEFAULTANGLE + Constants::KNEEDEFAULTANGLESERVO;
+    leg->next_bodyAngle = -1 * new_thetaH + Constants::BODYDEFAULTANGLESERVO;
+    leg->next_shoulderAngle = -1 * (new_thetaS - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
+
+    Serial.printf("thetaW = %d | thetaH = %d | thetaS = %d\n", new_thetaW, new_thetaH, new_thetaS);
+    Serial.printf("X = %f | Y = %f | Z = %f\n", leg->x, leg->y, z);
+
+    leg->move();
+    leg->updateCoordinates(leg->x, leg->y, z);
+}
+
 
 
 

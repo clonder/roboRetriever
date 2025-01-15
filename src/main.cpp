@@ -77,15 +77,15 @@ void setup()
                     }
                 // command for tilting forward
                 } else if (cmd.find("ft") != -1) {
-                    int z = stoi(cmd.substr(2, cmd.length()));
-                    if (z >= 2 && z <= 19) {
-                        ik.tilt(z, FORWARD);
+                    int a = stoi(cmd.substr(2, cmd.length()));
+                    if (a >= 2 && a <= 60) { //TODO: adjust
+                        ik.tilt(a, FORWARD);
                     }
                 // command for tilting backward
                 } else if (cmd.find("bt") != -1) {
-                    int z = stoi(cmd.substr(2, cmd.length()));
-                    if (z >= 3 && z <= 19) {
-                        ik.tilt(z, BACKWARD);
+                    int a = stoi(cmd.substr(2, cmd.length()));
+                    if (a >= 2 && a <= 60) { //TODO: adjust
+                        ik.tilt(a, BACKWARD);
                     }
                 // command for resetting to starting position
                 } else if (cmd.find("RESET") != -1) {

@@ -34,7 +34,9 @@ class InverseKinematics {
     void moveForward();
 
     // tilt the robot forwards or backwards. direction
-    void tilt(double z, Direction direction);
+    void tilt(int a, Direction direction);
+
+    void moveLegUp(Leg* leg, double z);
 };
 
 #endif //INVERSEKINEMATICS_H
