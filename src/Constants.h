@@ -27,7 +27,6 @@ namespace Constants {
 
     constexpr int WALKINGHEIGHT = 19;
     constexpr int AMOUNT_POINTS = 120;
-
 }
 
 #endif //CONSTANTS_H

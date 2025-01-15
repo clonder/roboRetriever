@@ -7,7 +7,6 @@
 #include <Arduino.h>
 #include <Leg.h>
 
-
 /**
  * Contains all functions, variables related to the inverse kinematics
  */
@@ -19,23 +18,20 @@ class InverseKinematics {
         Leg LeftFront = Leg(25, 33, 32, true);
         Leg RightFront = Leg(5, 18, 19, false);
 
-        // Leg* legs[4] = {  &RightFront, &LeftFront, &LeftRear, &RightRear };
         Leg* legs[4] = {  &RightFront, &LeftRear, &LeftFront,  &RightRear };
 
     InverseKinematics() = default;
 
-    // Elbow angle
-    static double calculateThetaH(double x, double z);
-    static double calculateThetaW(double x, double y, double z);
-    static double calculateThetaS(double x, double y, double z);
+    static int calculateThetaH(double x, double z);
+    static int calculateThetaW(double x, double y, double z);
+    static int calculateThetaS(double x, double y, double z);
 
     // Starting sequence. Sets all servos to desired default position
     void Start();
 
     void moveZ(double z);
     void moveY(double y);
-    void moveY(Leg* leg, double y);
-    void moveForward(int steps);
+    void moveForward();
 
     // tilt the robot forwards or backwards. direction
     void tilt(double z, Direction direction);

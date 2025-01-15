@@ -56,41 +56,38 @@ void setup()
 
             // Execute each command
             for (const string& cmd : commands) {
+                // command for moving along y-axis (for/backwards)
                 if (cmd.find("y") != -1) {
                     int y = stoi(cmd.substr(1, cmd.length()));
                     ik.moveY(y);
+                // command for walking
                 } else if (cmd.find("w") != -1) {
                     int steps = stoi(cmd.substr(1, cmd.length()));
-                    
-                    // Break down the movement into smaller steps
-                    const int stepIncrement = 1; // Adjust this value as needed
-                    int remainingSteps = steps;
-                    
-                    while (remainingSteps > 0) {
+
+                    for (int i = 0; i < steps; i++) {
                         esp_task_wdt_reset();
-                        int currentStep = min(stepIncrement, remainingSteps);
-                        ik.moveForward(currentStep);
-                        remainingSteps -= currentStep;
-                        
-                        // Yield control to reset the watchdog timer
-                        
+                        ik.moveForward();
                     }
                     esp_task_wdt_reset();
+                // command for moving vertically
                 } else if (cmd.find("z") != -1) {
                     int z = stoi(cmd.substr(1, cmd.length()));
                     if (z >= 6 && z <= 19) {
                         ik.moveZ(z);
                     }
+                // command for tilting forward
                 } else if (cmd.find("ft") != -1) {
                     int z = stoi(cmd.substr(2, cmd.length()));
                     if (z >= 2 && z <= 19) {
                         ik.tilt(z, FORWARD);
                     }
+                // command for tilting backward
                 } else if (cmd.find("bt") != -1) {
                     int z = stoi(cmd.substr(2, cmd.length()));
                     if (z >= 3 && z <= 19) {
                         ik.tilt(z, BACKWARD);
                     }
+                // command for resetting to starting position
                 } else if (cmd.find("RESET") != -1) {
                     ik.Start();
                 } else {
