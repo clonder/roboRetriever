@@ -73,7 +73,14 @@ void setup()
                 } else if (cmd.find("z") != -1) {
                     int z = stoi(cmd.substr(1, cmd.length()));
                     if (z >= 6 && z <= 19) {
-                        ik.moveZ(z);
+                        // Get current z of first leg, as all legs have same height;
+                        int current_z = ik.legs[0]->z;
+                        int step = z > current_z ? 1 : -1;
+                        // Incrementally move z position
+                        for (int i = current_z; i != z; i += step) {
+                            ik.moveZ(i);
+                            delay(10);
+                        }
                     }
                 // command for tilting forward
                 } else if (cmd.find("ft") != -1) {

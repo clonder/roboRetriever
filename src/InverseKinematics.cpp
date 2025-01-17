@@ -67,7 +67,7 @@ int InverseKinematics::calculateThetaW(const double x, const double y, const dou
 * @param z Z coordinate
 */
 void InverseKinematics::moveZ(double z) {
-     for (Leg* leg : legs) {
+    for (Leg* leg : legs) {
         leg->next_kneeAngle = calculateThetaW(leg->x, leg->y, z);
         leg->next_bodyAngle = calculateThetaH(leg->x, z);
         leg->next_shoulderAngle = calculateThetaS(leg->x, leg->y, z);
@@ -78,7 +78,7 @@ void InverseKinematics::moveZ(double z) {
         leg->updateCoordinates(leg->x, leg->y, z);
 
         Serial.println("Vertical Movement complete");
-     }
+    }
 }
 
 /**
