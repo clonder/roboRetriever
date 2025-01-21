@@ -120,7 +120,7 @@ void InverseKinematics::moveForward() {
 * @param direction. Enum (forward, backward). enum value = offset in the legs array. 0 moves the front legs, 2 moves the back legs
 */
 void InverseKinematics::tilt(int a, Direction direction) {
-    double b = Constants::HALF_BODY * sin(a);
+    double b = Constants::HALF_BODY * sin(radians(a));
 
     // move legs of direction (forward or backward)
     for (int i = 0; i < 3; i+=2) {
