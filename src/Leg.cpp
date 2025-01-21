@@ -69,11 +69,14 @@ void Leg::resetPosition()
     {
         rotateServo(&ShoulderServo, Constants::LEFT_SHOULDERDEFAULTANGLESERVO);
         rotateServo(&KneeServo, Constants::LEFT_KNEEDEFAULTANGLESERVO);
+        kneeAngle = Constants::LEFT_KNEEDEFAULTANGLESERVO;
+        shoulderAngle = Constants::LEFT_SHOULDERDEFAULTANGLESERVO;
     }
-    else
-    {
+    else {
         rotateServo(&ShoulderServo, Constants::SHOULDERDEFAULTANGLESERVO);
         rotateServo(&KneeServo, Constants::KNEEDEFAULTANGLESERVO);
+        kneeAngle = Constants::KNEEDEFAULTANGLESERVO;
+        shoulderAngle = Constants::SHOULDERDEFAULTANGLESERVO;
     }
     updateCoordinates(Constants::BASEFRONTELEGEXTEND, Constants::BASESIDELEGEXTEND, Constants::BASEHEIGHT);
 }
