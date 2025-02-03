@@ -11,9 +11,10 @@ using namespace std;
  */
 void InverseKinematics::Start()
 {
-  for (Leg* leg : legs) {
-    leg->resetPosition();
-  }
+    for (Leg *leg : legs)
+    {
+        leg->resetPosition();
+    }
 }
 
 /**
@@ -22,13 +23,14 @@ void InverseKinematics::Start()
  * @param z Z coordinate
  * @return thetaH Angle in degrees
  */
-int InverseKinematics::calculateThetaH(double x,  double z)
+int InverseKinematics::calculateThetaH(double x, double z)
 {
     const double phi = atan(x / z);
     const double alpha_2 = acos(Constants::SHOULDER / sqrt(pow(x, 2) + pow(z, 2)));
     const double thetaH = phi - PI / 2 + alpha_2;
 
-    return -1 * degrees(thetaH) + Constants::BODYDEFAULTANGLESERVO;;
+    return -1 * degrees(thetaH) + Constants::BODYDEFAULTANGLESERVO;
+    ;
 }
 
 /**
@@ -44,7 +46,8 @@ int InverseKinematics::calculateThetaS(const double x, const double y, const dou
     const double p2 = 2 * Constants::LIMB * sqrt(pow(x, 2) + pow(y, 2) + pow(z, 2) - pow(Constants::SHOULDER, 2));
     const double phi = atan(y / sqrt(pow(x, 2) + pow(z, 2) - pow(Constants::SHOULDER, 2)));
     const double thetaS = acos(p1 / p2) - phi;
-    return  -1 * (degrees(thetaS) - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;;
+    return -1 * (degrees(thetaS) - Constants::SHOULDERDEFAULTANGLE) + Constants::SHOULDERDEFAULTANGLESERVO;
+    ;
 }
 
 /**
@@ -63,11 +66,13 @@ int InverseKinematics::calculateThetaW(const double x, const double y, const dou
 }
 
 /**
-* moves the robot vertically to the given z coordinate.
-* @param z Z coordinate
-*/
-void InverseKinematics::moveZ(double z) {
-    for (Leg* leg : legs) {
+ * moves the robot vertically to the given z coordinate.
+ * @param z Z coordinate
+ */
+void InverseKinematics::moveZ(double z)
+{
+    for (Leg *leg : legs)
+    {
         leg->next_kneeAngle = calculateThetaW(leg->x, leg->y, z);
         leg->next_bodyAngle = calculateThetaH(leg->x, z);
         leg->next_shoulderAngle = calculateThetaS(leg->x, leg->y, z);
@@ -84,9 +89,11 @@ void InverseKinematics::moveZ(double z) {
 /**
  * moves the robot forward/backward to a given y coordinate.
  * @param y Y coordinate
-*/
-void InverseKinematics::moveY(double y) {
-     for (Leg* leg : legs) {
+ */
+void InverseKinematics::moveY(double y)
+{
+    for (Leg *leg : legs)
+    {
         leg->next_bodyAngle = calculateThetaH(leg->x, leg->z);
         leg->next_kneeAngle = calculateThetaW(leg->x, y, leg->z);
         leg->next_shoulderAngle = calculateThetaS(leg->x, y, leg->z);
@@ -96,18 +103,38 @@ void InverseKinematics::moveY(double y) {
         leg->move();
         leg->updateCoordinates(leg->x, y, leg->z);
         delay(1000);
-     }
+    }
 }
 
-void InverseKinematics::moveForward() {
-    for (Leg* leg : legs) {
-      	// in interpolate we have all the y and z positions needed to move a step forward
+/**
+ * moves the robot forward/backward to a given y coordinate.
+ * @param y Y coordinate
+ */
+void InverseKinematics::moveY(Leg *leg, double y)
+{
+    leg->next_bodyAngle = calculateThetaH(leg->x, leg->z);
+    leg->next_kneeAngle = calculateThetaW(leg->x, y, leg->z);
+    leg->next_shoulderAngle = calculateThetaS(leg->x, y, leg->z);
+
+    Serial.printf("X = %f | Y = %f | Z = %f\n", leg->x, y, leg->z);
+
+    leg->move();
+    leg->updateCoordinates(leg->x, y, leg->z);
+    delay(1000);
+}
+
+void InverseKinematics::moveForward()
+{
+    for (Leg *leg : legs)
+    {
+        // in interpolate we have all the y and z positions needed to move a step forward
         // we also have the angles for every y and z position
-        for (int j = 0; j < Constants::AMOUNT_POINTS; j++) {
-        	// move leg to this position
+        for (int j = 0; j < Constants::AMOUNT_POINTS; j++)
+        {
+            // move leg to this position
             // bodyAngle never changes
-    		leg->next_shoulderAngle = get<0>(leg->interpolation_angles[j]);
-    		leg->next_kneeAngle = get<1>(leg->interpolation_angles[j]);
+            leg->next_shoulderAngle = get<0>(leg->interpolation_angles[j]);
+            leg->next_kneeAngle = get<1>(leg->interpolation_angles[j]);
             leg->move();
             delay(10);
         }
@@ -115,29 +142,33 @@ void InverseKinematics::moveForward() {
 }
 
 /**
-* tilts the robot forwards or backwards
-* @param a tilting angle
-* @param direction. Enum (forward, backward). enum value = offset in the legs array. 0 moves the front legs, 2 moves the back legs
-*/
-void InverseKinematics::tilt(int a, Direction direction) {
-    double b = Constants::HALF_BODY * sin(a);
+ * tilts the robot forwards or backwards
+ * @param a tilting angle
+ * @param direction. Enum (forward, backward). enum value = offset in the legs array. 0 moves the front legs, 2 moves the back legs
+ */
+void InverseKinematics::tilt(int a, Direction direction)
+{
+    double b = Constants::HALF_BODY * sin(radians(a));
 
     // move legs of direction (forward or backward)
-    for (int i = 0; i < 3; i+=2) {
-        Leg* leg = legs[direction + i];
+    for (int i = 0; i < 3; i += 2)
+    {
+        Leg *leg = legs[direction + i];
         double z = leg->z + b;
         moveZ(leg, z);
     }
 
-   Direction new_direction = static_cast<Direction>(direction ^ 1); //use xor to toggle 1/0
-   for (int i = 0; i < 3; i+=2) {
-        Leg* leg = legs[new_direction  + i];
+    Direction new_direction = static_cast<Direction>(direction ^ 1); // use xor to toggle 1/0
+    for (int i = 0; i < 3; i += 2)
+    {
+        Leg *leg = legs[new_direction + i];
         double z = leg->z - b;
         moveZ(leg, z);
-   }
+    }
 }
 
-void InverseKinematics::moveZ(Leg* leg, double z) {
+void InverseKinematics::moveZ(Leg *leg, double z)
+{
     leg->next_kneeAngle = calculateThetaW(leg->x, leg->y, z);
     leg->next_bodyAngle = calculateThetaH(leg->x, z);
     leg->next_shoulderAngle = calculateThetaS(leg->x, leg->y, z);
@@ -147,12 +178,3 @@ void InverseKinematics::moveZ(Leg* leg, double z) {
     leg->move();
     leg->updateCoordinates(leg->x, leg->y, z);
 }
-
-
-
-
-
-
-
-
-

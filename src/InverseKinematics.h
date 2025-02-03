@@ -13,10 +13,10 @@
 class InverseKinematics {
     // Leg classes to control each leg individually
     public:
-        Leg LeftRear = Leg(14, 12, 13, true);
-        Leg RightRear = Leg(4, 2, 15, false);
-        Leg LeftFront = Leg(25, 33, 32, true);
-        Leg RightFront = Leg(5, 18, 19, false);
+        Leg LeftRear = Leg(14, 12, 13, true, true);
+        Leg RightRear = Leg(4, 2, 15, false, true);
+        Leg LeftFront = Leg(25, 33, 32, true, false);
+        Leg RightFront = Leg(5, 18, 19, false, false);
 
         Leg* legs[4] = {  &RightFront, &LeftRear, &LeftFront,  &RightRear };
 
@@ -30,6 +30,7 @@ class InverseKinematics {
     void Start();
 
     void moveZ(double z);
+    void moveY(Leg *leg, double y);
     void moveY(double y);
     void moveForward();
 

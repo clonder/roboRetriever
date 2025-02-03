@@ -18,6 +18,7 @@ enum Direction {
 class Leg {
     public:
         bool isLeft;
+        bool isHind;
 
         //current angles
         int kneeAngle = Constants::KNEEDEFAULTANGLESERVO;
@@ -48,9 +49,10 @@ class Leg {
          * @param shoulderServoPin
          * @param kneeServoPin
          */
-        Leg(int bodyServoPin, int shoulderServoPin, int kneeServoPin, bool isLeft)
+        Leg(int bodyServoPin, int shoulderServoPin, int kneeServoPin, bool isLeft, bool isHind)
         {
             this->isLeft = isLeft;
+            this->isHind = isHind;
 
             calculateCurve(); // saves array of points for walking interpolation
             calculateInterpolationAngles();

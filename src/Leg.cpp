@@ -69,14 +69,11 @@ void Leg::resetPosition()
     {
         rotateServo(&ShoulderServo, Constants::LEFT_SHOULDERDEFAULTANGLESERVO);
         rotateServo(&KneeServo, Constants::LEFT_KNEEDEFAULTANGLESERVO);
-        kneeAngle = Constants::LEFT_KNEEDEFAULTANGLESERVO;
-        shoulderAngle = Constants::LEFT_SHOULDERDEFAULTANGLESERVO;
     }
-    else {
+    else
+    {
         rotateServo(&ShoulderServo, Constants::SHOULDERDEFAULTANGLESERVO);
         rotateServo(&KneeServo, Constants::KNEEDEFAULTANGLESERVO);
-        kneeAngle = Constants::KNEEDEFAULTANGLESERVO;
-        shoulderAngle = Constants::SHOULDERDEFAULTANGLESERVO;
     }
     updateCoordinates(Constants::BASEFRONTELEGEXTEND, Constants::BASESIDELEGEXTEND, Constants::BASEHEIGHT);
 }
@@ -126,9 +123,9 @@ void Leg::calculateInterpolationAngles()
     for (int i = 0; i < Constants::AMOUNT_POINTS; i++)
     {
         tuple<double, double> curve_point = curve_values[i];
-        double z_value = Constants::WALKINGHEIGHT - get<1>(curve_point);
-        double thetaW = InverseKinematics::calculateThetaW(x, get<0>(curve_point), z_value);
-        double thetaS = InverseKinematics::calculateThetaS(x, get<0>(curve_point), z_value);
+        double z_value = z - get<1>(curve_point);
+        double thetaW = InverseKinematics::calculateThetaW(x, y + get<0>(curve_point), z_value);
+        double thetaS = InverseKinematics::calculateThetaS(x, y + get<0>(curve_point), z_value);
         interpolation_angles[i] = make_tuple(thetaS, thetaW);
     }
 }

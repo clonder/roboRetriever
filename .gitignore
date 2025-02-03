@@ -4,4 +4,5 @@ __pycache__
 *.pio
 *.pio/
 .ccls-cache
+.vscode
 
