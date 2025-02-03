@@ -142,12 +142,11 @@ void InverseKinematics::moveForward()
 }
 
 /**
- * tilts the robot forwards or backwards
- * @param a tilting angle
- * @param direction. Enum (forward, backward). enum value = offset in the legs array. 0 moves the front legs, 2 moves the back legs
- */
-void InverseKinematics::tilt(int a, Direction direction)
-{
+* tilts the robot forwards or backwards
+* @param a tilting angle
+* @param direction. Enum (forward, backward). enum value = offset in the legs array. 0 moves the front legs, 2 moves the back legs
+*/
+void InverseKinematics::tilt(int a, Direction direction) {
     double b = Constants::HALF_BODY * sin(radians(a));
 
     // move legs of direction (forward or backward)
